@@ -247,7 +247,7 @@ window.OB = window.OB || {};
     ${OB.nav()}
     <div class="list-search"><div class="container">
       <div class="list-search-head"><h1>Movies</h1><p>Showtimes and seats at cinemas across Nigeria.</p></div>
-      <div class="search-card list-search-card">${OB.cinemaSearch()}</div>
+      <div class="search-card list-search-card">${OB.cinemaSearch(false)}</div>
     </div></div>
     <main class="container page-body" style="gap:24px;padding-top:28px">
       ${OB.nowShowing()}

@@ -241,7 +241,7 @@ window.OB = window.OB || {};
         ${icon('chevronDown', 'sf-caret')}
       </button>${open ? cinemaPop(key) : ''}</div>`;
   };
-  OB.cinemaSearch = () => {
+  OB.cinemaSearch = (withButton = true) => {
     const fs = OB.state.fs; const chain = OB.cinemaChains.find((c) => c.id === fs.mChain);
     return `
       <p class="search-title">Find your next movie to watch</p>
@@ -249,6 +249,7 @@ window.OB = window.OB || {};
         ${cField('cchain', 'ticket', 'Select cinema', chain ? chain.name : 'Choose a cinema', !chain)}
         ${cField('cbranch', 'pin', 'Select cinema location', fs.mBranch || 'Choose a location', !fs.mBranch)}
         ${cField('cdate', 'calendar', 'Select date', cDayLabel(fs.mDate), false)}
+        ${withButton ? go('movies', 'Find movies') : ''}
       </div>`;
   };
 
@@ -478,10 +479,6 @@ window.OB = window.OB || {};
     const order = [tab, ...['flights', 'events', 'experiences', 'movies', 'hotels', 'extras'].filter((x) => x !== tab)].filter(shown);
     const wide = heroFn === OB.hero2 ? 'container-wide' : '';
     if (OB.state.homeLoading) return `${heroFn(tab)}${OB.homeSkeleton(wide)}${OB.footer()}`;
-    if (tab === 'movies') return `
-      ${heroFn(tab)}
-      <main class="container page-body ${wide}">${OB.nowShowing()}</main>
-      ${OB.footer()}`;
     const bodyRails = order.map((k) => sections[k]());
     return `
       ${heroFn(tab)}
