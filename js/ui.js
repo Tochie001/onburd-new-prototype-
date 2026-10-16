@@ -295,9 +295,7 @@ window.OB = window.OB || {};
         </form>
       </div>
       <div class="newsletter-art">
-        <span class="newsletter-panel" aria-hidden="true"></span>
-        <img src="assets/img/newsletter-traveller.png" alt="">
-        <div class="newsletter-stat"><strong>120+</strong><span>experiences to explore</span></div>
+        <img src="assets/img/newsletter-art.png" alt="Smiling traveller with a backpack. 120+ experiences to explore">
       </div>
     </section>`;
 

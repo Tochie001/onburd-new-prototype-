@@ -519,7 +519,7 @@ a.mcard:hover, button.mcard:hover, article.mcard:hover { text-decoration: none; 
 .newsletter form { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; padding-bottom: 48px; }
 .newsletter .input { background: transparent; border-color: rgba(255,255,255,.4); color: var(--on-dark); border-radius: var(--r-pill); height: 50px; max-width: 340px; flex: 1 1 220px; }
 .newsletter .input::placeholder { color: var(--on-dark-muted); }
-.newsletter-art { position: relative; align-self: end; justify-self: center; width: min(360px, 100%); }
+.newsletter-art { position: relative; align-self: end; justify-self: center; width: min(400px, 100%); }
 .newsletter-art img { position: relative; z-index: 1; width: 100%; height: auto; display: block; }
 .newsletter-panel { position: absolute; left: 3%; right: 3%; bottom: 0; height: 66%; border-radius: 28px 28px 0 0; background: linear-gradient(135deg, #FDEBB9 0%, #FAD47E 50%, #F5BD4D 100%); }
 .newsletter-panel::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: repeating-linear-gradient(135deg, rgba(255,255,255,0) 0 46px, rgba(255,255,255,.18) 46px 92px); }
