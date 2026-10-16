@@ -1,0 +1,11 @@
+# Design working files (Figma exports, crops, layer dumps)
+_source/
+
+# Original photo and video sources; web-sized copies are committed instead
+assets/img/*-unsplash.jpg
+assets/video/hero-jet-original.mp4
+assets/brand/PAY-SMALL-SMALL*
+assets/brand/listing page*.png
+assets/brand/pss-logo.png
+
+.DS_Store
