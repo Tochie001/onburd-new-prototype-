@@ -2,18 +2,32 @@ window.OB = window.OB || {};
 (() => {
   const { icon, img, esc, fmt } = OB;
 
-  const listBanner = (title, accent, text, art = 'illus-suitcase') => `
-    <section class="list-banner">
-      <div><h1>${esc(title)} <em>${esc(accent)}</em></h1><p>${esc(text)}</p></div>
-      <img src="${img(art)}" alt="">
-    </section>`;
-
   const pager = (pages = 6, current = 1) => `
     <nav class="pager" aria-label="Pagination">
       <button class="btn btn-secondary btn-sm" type="button" ${current === 1 ? 'disabled' : ''}>${icon('arrowLeft')} Previous</button>
       <div class="pager-pages">${[1, 2, 3, '…', pages].map((p) => p === '…' ? '<span class="muted" style="padding:8px">…</span>' : `<button type="button" ${p === current ? 'aria-current="page"' : ''} data-action="toast" data-msg="Page ${p} uses the same layout.">${p}</button>`).join('')}</div>
       <button class="btn btn-secondary btn-sm" type="button" data-action="toast" data-msg="Page 2 uses the same layout.">Next ${icon('arrowRight')}</button>
     </nav>`;
+
+  const listSearch = (kind, title, sub) => {
+    const q = OB.state.listQ[kind] || '';
+    const ph = kind === 'events' ? 'Artist, event or venue' : 'Tours, day trips, spa days, places…';
+    return `
+    <div class="list-search"><div class="container">
+      <div class="list-search-head"><h1>${title}</h1><p>${sub}</p></div>
+      <form class="search-card list-search-card" data-form="list-search" role="search">
+        <div class="search-fields">
+          <label class="sfield q-field" for="ls-${kind}">
+            <span class="sfield-icon">${icon('search')}</span>
+            <span class="sfield-body"><span class="sf-label">Search ${kind}</span>
+              <input id="ls-${kind}" type="search" placeholder="${ph}" value="${esc(q)}" data-action="list-q" data-kind="${kind}" autocomplete="off"></span>
+          </label>
+          <button class="search-go" type="submit" aria-label="Search">${icon('search')}<span class="search-go-label">Search</span></button>
+        </div>
+      </form>
+    </div></div>`;
+  };
+  const matchQ = (q, fields) => !q || fields.some((v) => v.toLowerCase().includes(q.toLowerCase()));
 
   const cityToolbar = (label, chips, active, action) => `
     <div class="list-toolbar">
@@ -29,14 +43,16 @@ window.OB = window.OB || {};
   OB.pages.events = () => {
     const cats = ['All', 'Concerts', 'Parties', 'Comedy', 'Theatre', 'Festivals', 'Food & drink'];
     const active = OB.state.eventCat;
-    const list = OB.events.filter((e) => active === 'All' || e.category === active);
+    const q = (OB.state.listQ.events || '').trim();
+    const list = OB.events.filter((e) => (active === 'All' || e.category === active) && matchQ(q, [e.title, e.venue, e.city, e.category]));
     return `
       ${OB.nav()}
-      <main class="container page-body" style="gap:32px">
-        ${listBanner('Live moments.', 'Unforgettable nights.', 'Concerts, comedy, theatre and the best parties in town. Secure your spot and pay small small if you need to.')}
+      ${listSearch('events', 'Events', 'Concerts, comedy, theatre and the best parties in town.')}
+      <main class="container page-body" style="gap:24px;padding-top:28px">
         ${cityToolbar('Events in', cats, active, 'event-cat')}
-        ${list.length ? `<div class="grid-4">${list.map(OB.eventCard).join('')}</div>` : `<div class="panel empty">${icon('ticket')}<strong style="color:var(--ink)">No ${esc(active.toLowerCase())} events in Lagos yet</strong><span>New events are added every week.</span></div>`}
-        ${pager(4)}
+        ${q ? `<p class="text-sm muted">${list.length} result${list.length === 1 ? '' : 's'} for “${esc(q)}”</p>` : ''}
+        ${list.length ? `<div class="grid-4">${list.map(OB.eventCard).join('')}</div>` : `<div class="panel empty">${icon('ticket')}<strong style="color:var(--ink)">${q ? `No events match “${esc(q)}”` : `No ${esc(active.toLowerCase())} events in Lagos yet`}</strong><span>${q ? 'Try an artist, venue or another category.' : 'New events are added every week.'}</span></div>`}
+        ${q ? '' : pager(4)}
       </main>
       ${OB.footer()}`;
   };
@@ -117,13 +133,16 @@ window.OB = window.OB || {};
   /* ---------- Experiences ---------- */
   OB.pages.experiences = () => {
     const cats = ['All', 'Day trips', 'Tours', 'Wellness', 'Adventure', 'Food & drink'];
+    const q = (OB.state.listQ.experiences || '').trim();
+    const list = OB.experiences.filter((x) => matchQ(q, [x.title, x.place, x.by]));
     return `
       ${OB.nav()}
-      <main class="container page-body" style="gap:32px">
-        ${listBanner('Go beyond ordinary.', 'Live extraordinary.', 'Find your next adventure with Onburd, from relaxing retreats to once-in-a-lifetime trips, curated by operators we trust.')}
+      ${listSearch('experiences', 'Experiences', 'Trips, day plans and retreats from operators we trust.')}
+      <main class="container page-body" style="gap:24px;padding-top:28px">
         ${cityToolbar('Experiences from', cats, OB.state.expCat, 'exp-cat')}
-        <div class="grid-3">${OB.experiences.slice(0, 9).map(OB.expCard).join('')}</div>
-        ${pager(8)}
+        ${q ? `<p class="text-sm muted">${list.length} result${list.length === 1 ? '' : 's'} for “${esc(q)}”</p>` : ''}
+        ${list.length ? `<div class="grid-3">${list.slice(0, 9).map(OB.expCard).join('')}</div>` : `<div class="panel empty">${icon('compass')}<strong style="color:var(--ink)">No experiences match “${esc(q)}”</strong><span>Try a place like Egypt or Lagos.</span></div>`}
+        ${q ? '' : pager(8)}
       </main>
       ${OB.footer()}`;
   };

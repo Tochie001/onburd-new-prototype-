@@ -433,6 +433,14 @@ button.sfield:hover { border-color: var(--ink-2); }
 .q-row mark { background: var(--blue-100); color: inherit; border-radius: 2px; }
 .q-all { width: 100%; border: 0; background: none; color: var(--blue-600); font-weight: 700; font-size: var(--fs-sm); padding: 10px; display: flex; justify-content: center; align-items: center; gap: 6px; border-top: 1px solid var(--line); margin-top: 4px; }
 
+.search-title { font-size: var(--fs-h4); font-weight: 600; color: var(--ink); }
+.list-search { background: var(--navy); color: var(--on-dark); padding-block: 32px 28px; }
+.list-search .container { display: grid; gap: 18px; }
+.list-search-head h1 { font-size: var(--fs-h1); }
+.list-search-head p { color: var(--on-dark-muted); margin-top: 4px; }
+.list-search-card { max-width: none; box-shadow: none; padding: 14px; border-radius: var(--r-lg); }
+.list-search-card .q-field { flex: 1 1 auto; }
+
 /* compact search bar used on results pages */
 .searchbar { background: var(--navy); padding-block: 16px; }
 .searchbar .search-card { max-width: none; box-shadow: none; padding: 14px; border-radius: var(--r-lg); }

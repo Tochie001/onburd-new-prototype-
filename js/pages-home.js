@@ -256,14 +256,26 @@ window.OB = window.OB || {};
         </div>`;
       case 'events': return OB.qSearch('events');
       case 'experiences': return OB.qSearch('experiences');
-      case 'movies': return `
+      case 'movies': {
+        const fs = OB.state.fs;
+        const chain = OB.cinemaChains.find((c) => c.id === fs.mChain);
+        const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(Date.UTC(2026, 9, 16 + i)); return d.toISOString().slice(0, 10); });
+        const lbl = (iso, i) => (i === 0 ? 'Today, ' : i === 1 ? 'Tomorrow, ' : '') + OB.fsDate(iso, i < 2 ? { day: 'numeric', month: 'long', year: 'numeric' } : { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+        const sel = (id, ic, label, action, opts, val) => `
+          <div class="sfield">
+            <span class="sfield-icon">${icon(ic)}</span>
+            <div class="sfield-body"><label for="${id}">${label}</label>
+              <select id="${id}" data-action="${action}">${opts.map(([v, t]) => `<option value="${esc(v)}" ${v === val ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></div>
+          </div>`;
+        return `
+        <p class="search-title">Find your next movie to watch</p>
         <div class="search-fields">
-          ${sfield('m-city', 'pin', 'City', 'Lagos', { options: ['Lagos', 'Abuja', 'Port Harcourt', 'Ibadan'] })}
-          ${sfield('m-cinema', 'film', 'Cinema', 'All cinemas', { options: ['All cinemas', ...OB.cinemas.map((c) => c.name)] })}
-          ${sfield('m-movie', 'search', 'Movie', 'All movies', { options: ['All movies', ...OB.movies.map((m) => m.title)] })}
-          ${sfield('m-date', 'calendar', 'Date', 'Today, 14 Oct', { options: ['Today, 14 Oct', 'Tomorrow, 15 Oct', 'Fri, 16 Oct', 'Sat, 17 Oct'] })}
+          ${sel('m-chain', 'ticket', 'Select cinema', 'm-chain', [['', 'All cinemas'], ...OB.cinemaChains.map((c) => [c.id, c.name])], fs.mChain)}
+          ${sel('m-branch', 'pin', 'Select cinema location', 'm-branch', chain ? [['', 'All locations'], ...chain.branches.map((b) => [b, b])] : [['', 'Choose a cinema first']], fs.mBranch)}
+          ${sel('m-date', 'calendar', 'Select date', 'm-date', days.map((d, i) => [d, lbl(d, i)]), fs.mDate)}
           ${go('movies', 'Find showtimes')}
         </div>`;
+      }
       case 'extras': return `
         <div class="search-fields">
           ${sfield('a-airport', 'pin', 'Departure airport', 'Lagos (LOS), Terminal 2', { wide: true, options: ['Lagos (LOS), Terminal 2', 'Lagos (LOS), MMA2 domestic', 'Abuja (ABV)', 'Port Harcourt (PHC)'] })}

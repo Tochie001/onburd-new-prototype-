@@ -86,6 +86,13 @@ OB.movies = [
   { id: 'aso-ebi', title: 'Aso Ebi', genre: 'Family · Comedy', rating: 'PG', runtime: '1h 41m', art: ['#0E6E55', '#F6F9FF'], tagline: 'Same fabric. Different drama.' }
 ];
 
+OB.cinemaChains = [
+  { id: 'filmhouse', name: 'Filmhouse Cinemas', branches: ['Filmhouse IMAX Lekki', 'Filmhouse Surulere', 'Filmhouse Landmark VI'] },
+  { id: 'genesis', name: 'Genesis Cinemas', branches: ['Genesis Maryland Mall', 'Genesis Lekki', 'Genesis Port Harcourt'] },
+  { id: 'ebonylife', name: 'EbonyLife Cinemas', branches: ['EbonyLife Victoria Island'] },
+  { id: 'viva', name: 'Viva Cinemas', branches: ['Viva Ikeja', 'Viva Ibadan', 'Viva Enugu'] }
+];
+
 OB.cinemas = [
   { id: 'filmhouse-lekki', name: 'Filmhouse IMAX Lekki', area: 'Lekki Phase 1', times: [['11:30', 'IMAX'], ['14:45', 'IMAX'], ['18:00', 'IMAX'], ['21:15', 'IMAX']], price: 9500 },
   { id: 'genesis-maryland', name: 'Genesis Cinemas Maryland Mall', area: 'Maryland', times: [['12:10', '2D'], ['15:20', '2D'], ['19:40', '2D']], price: 6000 },
