@@ -220,7 +220,6 @@ window.OB = window.OB || {};
       const chains = fs.mChain ? OB.cinemaChains.filter((c) => c.id === fs.mChain) : OB.cinemaChains;
       return `
       <div class="sf-pop c-pop" role="listbox" aria-label="Select cinema location">
-        ${cOpt('branch', '', `<span class="c-pin">${icon('pin')}</span><span class="c-text"><strong>All locations</strong><small>${fs.mChain ? chains[0].name : 'Every cinema'}</small></span>`, !fs.mBranch)}
         ${chains.map((c) => `${fs.mChain ? '' : `<h4 class="c-group">${c.name}</h4>`}${c.branches.map(([b, area]) => cOpt('branch', b, `<span class="c-pin">${icon('pin')}</span><span class="c-text"><strong>${b}</strong><small>${area}</small></span>`, fs.mBranch === b)).join('')}`).join('')}
       </div>`;
     }
@@ -248,7 +247,7 @@ window.OB = window.OB || {};
       <p class="search-title">Find your next movie to watch</p>
       <div class="search-fields c-fields">
         ${cField('cchain', 'ticket', 'Select cinema', chain ? chain.name : 'Choose a cinema', !chain)}
-        ${cField('cbranch', 'pin', 'Select cinema location', fs.mBranch || 'All locations', !fs.mBranch)}
+        ${cField('cbranch', 'pin', 'Select cinema location', fs.mBranch || 'Choose a location', !fs.mBranch)}
         ${cField('cdate', 'calendar', 'Select date', cDayLabel(fs.mDate), false)}
       </div>`;
   };
