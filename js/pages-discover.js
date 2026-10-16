@@ -184,12 +184,6 @@ window.OB = window.OB || {};
         </div>
         <div class="with-aside">
           <div class="stack" style="gap:28px;min-width:0">
-            <div class="highlights">
-              <div class="highlight">${icon('users')}<div><strong>Private group</strong>From 1 traveller</div></div>
-              <div class="highlight">${icon('refresh')}<div><strong>Free cancellation</strong>Up to 14 days before</div></div>
-              <div class="highlight">${icon('checkCircle')}<div><strong>Instant confirmation</strong>Voucher by email</div></div>
-              <div class="highlight">${icon('wallet')}<div><strong>Pay Small Small</strong>30% deposit today</div></div>
-            </div>
             <div class="stack" style="gap:10px"><h2 style="font-size:var(--fs-h2)">About this experience</h2>
               <p style="color:var(--ink-2);max-width:68ch">${isEgypt ? 'Discover Egypt’s ancient treasures on a 6-day private trip. Stand at the foot of the Great Pyramid, sail the Nile on a 5-star cruise, rise over Luxor in a hot air balloon at sunrise and explore the Valley of the Kings with an Egyptologist guide.' : `A hand-picked experience run by ${esc(x.by)}. Everything is arranged for you, from pickup to the last stop, so you can enjoy the day.`}</p></div>
             <div>
