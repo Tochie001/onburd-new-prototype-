@@ -462,12 +462,18 @@ button.sfield:hover { border-color: var(--ink-2); }
 .c-text small { font-size: var(--fs-xs); color: var(--muted); }
 .c-group { font-size: var(--fs-2xs); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; padding: 10px 10px 4px; }
 .c-date-pop { right: 0; left: auto; width: 420px; padding: 8px 12px 14px; }
+.c-cal-pop { right: 0; left: auto; width: 340px; padding: 14px 16px 12px; display: block; }
+.c-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.c-cal-head h4 { font-size: var(--fs-sm); }
+.c-cal-head .icon-btn { width: 32px; height: 32px; }
+.c-cal-pop .cal-day.is-start::before { inset: 0 2px; }
+.c-cal-note { font-size: var(--fs-2xs); color: var(--muted); text-align: center; margin-top: 8px; }
 @media (max-width: 860px) {
   .c-fields { flex-direction: column; }
   .c-fields .c-anchor { flex: none; width: 100%; }
   .c-fields .search-go { flex: none; width: 100%; height: 50px; display: flex; gap: 8px; align-items: center; justify-content: center; font-weight: 700; }
   .c-fields .search-go .search-go-label { display: inline; }
-  .c-pop, .c-date-pop { left: 0; right: 0; width: auto; }
+  .c-pop, .c-date-pop, .c-cal-pop { left: 0; right: 0; width: auto; }
 }
 .c-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
 .c-day { display: grid; justify-items: center; gap: 0; padding: 10px 0; border: 1px solid var(--line-2); border-radius: 12px; background: var(--surface); color: var(--ink); }

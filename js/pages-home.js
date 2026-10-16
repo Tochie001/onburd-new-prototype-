@@ -223,13 +223,29 @@ window.OB = window.OB || {};
         ${chains.map((c) => `${fs.mChain ? '' : `<h4 class="c-group">${c.name}</h4>`}${c.branches.map(([b, area]) => cOpt('branch', b, `<span class="c-pin">${icon('pin')}</span><span class="c-text"><strong>${b}</strong><small>${area}</small></span>`, fs.mBranch === b)).join('')}`).join('')}
       </div>`;
     }
+    const TODAY = '2026-10-16', LAST = '2026-11-30';
+    const ym = fs.mCalMonth || fs.mDate.slice(0, 7);
+    const [y, m] = ym.split('-').map(Number);
+    const first = new Date(Date.UTC(y, m - 1, 1));
+    const days = new Date(Date.UTC(y, m, 0)).getUTCDate();
+    const lead = (first.getUTCDay() + 6) % 7;
+    const cells = Array.from({ length: lead }, () => '<span></span>');
+    for (let d = 1; d <= days; d++) {
+      const iso = new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10);
+      const off = iso < TODAY || iso > LAST;
+      cells.push(`<button type="button" class="cal-day ${iso === fs.mDate ? 'is-start' : ''} ${iso === TODAY ? 'is-today' : ''}" data-action="c-pick" data-k="date" data-v="${iso}" ${off ? 'disabled' : ''} aria-pressed="${iso === fs.mDate}" aria-label="${OB.fsDate(iso)}">${d}</button>`);
+    }
+    const title = first.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
     return `
-      <div class="sf-pop c-pop c-date-pop" role="listbox" aria-label="Select date">
-        <h4 class="c-group">Showtimes this week</h4>
-        <div class="c-days">${C_DAYS.map((d, i) => `
-          <button class="c-day" type="button" role="option" data-action="c-pick" data-k="date" data-v="${d}" aria-selected="${fs.mDate === d}">
-            <small>${i === 0 ? 'Today' : i === 1 ? 'Tmrw' : OB.fsDate(d, { weekday: 'short' })}</small><strong>${OB.fsDate(d, { day: 'numeric' })}</strong><small>${OB.fsDate(d, { month: 'short' })}</small>
-          </button>`).join('')}</div>
+      <div class="sf-pop c-pop c-cal-pop" role="dialog" aria-label="Select date">
+        <div class="c-cal-head">
+          <button class="icon-btn" type="button" data-action="c-cal-nav" data-dir="-1" ${ym <= TODAY.slice(0, 7) ? 'disabled' : ''} aria-label="Previous month">${icon('chevronLeft')}</button>
+          <h4>${title}</h4>
+          <button class="icon-btn" type="button" data-action="c-cal-nav" data-dir="1" ${ym >= LAST.slice(0, 7) ? 'disabled' : ''} aria-label="Next month">${icon('chevronRight')}</button>
+        </div>
+        <div class="cal-grid cal-dow">${['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((x) => `<span>${x}</span>`).join('')}</div>
+        <div class="cal-grid">${cells.join('')}</div>
+        <p class="c-cal-note">Showtimes are published up to 30 Nov</p>
       </div>`;
   };
   const cField = (key, ic, label, value, empty) => {

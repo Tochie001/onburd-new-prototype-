@@ -203,6 +203,7 @@ window.OB = window.OB || {};
       }
       fs.pop = el.dataset.pop;
       if (fs.pop === 'cchain') { fs.cQuery = ''; render(); document.getElementById('c-q')?.focus(); return; }
+      if (fs.pop === 'cdate') fs.mCalMonth = fs.mDate.slice(0, 7);
       if (el.dataset.pick) {
         fs.picking = el.dataset.pick;
         if (fs.picking === 'ret' && fs.trip === 'oneway') { fs.trip = 'round'; fs.ret = null; }
@@ -235,6 +236,10 @@ window.OB = window.OB || {};
       if (next) { fs.apKey = next; render(); $('#ap-q')?.focus(); }
       else if (k === 'to') { fs.pop = 'dates'; fs.picking = 'dep'; fs.calMonth = fs.dep.slice(0, 7); render(); }
       else { fs.pop = null; render(); }
+    },
+    'c-cal-nav': (el) => {
+      const fs = S.fs; const [y, m] = (fs.mCalMonth || fs.mDate.slice(0, 7)).split('-').map(Number);
+      fs.mCalMonth = new Date(Date.UTC(y, m - 1 + +el.dataset.dir, 1)).toISOString().slice(0, 7); render();
     },
     'c-pick': (el) => {
       const fs = S.fs; const k = el.dataset.k; const v = el.dataset.v;
