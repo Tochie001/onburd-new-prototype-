@@ -87,11 +87,21 @@ OB.movies = [
 ];
 
 OB.cinemaChains = [
-  { id: 'filmhouse', name: 'Filmhouse Cinemas', branches: ['Filmhouse IMAX Lekki', 'Filmhouse Surulere', 'Filmhouse Landmark VI'] },
-  { id: 'genesis', name: 'Genesis Cinemas', branches: ['Genesis Maryland Mall', 'Genesis Lekki', 'Genesis Port Harcourt'] },
-  { id: 'ebonylife', name: 'EbonyLife Cinemas', branches: ['EbonyLife Victoria Island'] },
-  { id: 'viva', name: 'Viva Cinemas', branches: ['Viva Ikeja', 'Viva Ibadan', 'Viva Enugu'] }
+  { id: 'filmhouse', name: 'Filmhouse Cinemas', short: 'Filmhouse', color: '#E11D48', branches: [['Filmhouse IMAX Lekki', 'Lekki, Lagos'], ['Filmhouse Surulere', 'Surulere, Lagos'], ['Filmhouse Landmark', 'Victoria Island, Lagos']] },
+  { id: 'genesis', name: 'Genesis Cinemas', short: 'Genesis', color: '#7C3AED', branches: [['Genesis Maryland Mall', 'Maryland, Lagos'], ['Genesis Lekki', 'Lekki, Lagos'], ['Genesis Port Harcourt', 'GRA, Port Harcourt']] },
+  { id: 'ebonylife', name: 'EbonyLife Cinemas', short: 'EbonyLife', color: '#0F766E', branches: [['EbonyLife Victoria Island', 'Victoria Island, Lagos']] },
+  { id: 'viva', name: 'Viva Cinemas', short: 'Viva', color: '#EA580C', branches: [['Viva Ikeja', 'Ikeja City Mall, Lagos'], ['Viva Ibadan', 'Palms Mall, Ibadan'], ['Viva Enugu', 'Polo Park, Enugu']] }
 ];
+OB.movieShowing = {
+  'hail-mary': { chains: ['filmhouse', 'genesis', 'ebonylife', 'viva'] },
+  'third-mainland': { chains: ['filmhouse', 'genesis', 'viva'] },
+  'owambe-diaries': { chains: ['filmhouse', 'ebonylife', 'viva'] },
+  'harmattan': { chains: ['genesis', 'ebonylife'] },
+  'last-danfo': { chains: ['filmhouse', 'genesis', 'ebonylife', 'viva'], opens: '2026-10-18' },
+  'oguns-daughter': { chains: ['filmhouse', 'genesis'] },
+  'lagos-noir': { chains: ['ebonylife', 'viva'] },
+  'aso-ebi': { chains: ['filmhouse', 'genesis', 'ebonylife', 'viva'], opens: '2026-10-20' }
+};
 
 OB.cinemas = [
   { id: 'filmhouse-lekki', name: 'Filmhouse IMAX Lekki', area: 'Lekki Phase 1', times: [['11:30', 'IMAX'], ['14:45', 'IMAX'], ['18:00', 'IMAX'], ['21:15', 'IMAX']], price: 9500 },

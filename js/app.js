@@ -235,6 +235,18 @@ window.OB = window.OB || {};
       else if (k === 'to') { fs.pop = 'dates'; fs.picking = 'dep'; fs.calMonth = fs.dep.slice(0, 7); render(); }
       else { fs.pop = null; render(); }
     },
+    'c-pick': (el) => {
+      const fs = S.fs; const k = el.dataset.k; const v = el.dataset.v;
+      const onHome = /^#home2?(~|$)/.test(location.hash) || location.hash === '';
+      if (k === 'chain') { fs.mChain = v; fs.mBranch = ''; fs.pop = 'cbranch'; render(); return; }
+      if (k === 'branch') {
+        fs.mBranch = v;
+        if (v && !fs.mChain) fs.mChain = OB.cinemaChains.find((c) => c.branches.some(([b]) => b === v))?.id || '';
+      }
+      if (k === 'date') fs.mDate = v;
+      fs.pop = null;
+      if (onHome) go('movies'); else render();
+    },
     'fs-opt': (el) => {
       const fs = S.fs;
       if (el.dataset.k === 'trip') {

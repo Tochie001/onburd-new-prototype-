@@ -195,6 +195,59 @@ window.OB = window.OB || {};
       </div>`;
   };
 
+  const C_DAYS = Array.from({ length: 7 }, (_, i) => new Date(Date.UTC(2026, 9, 16 + i)).toISOString().slice(0, 10));
+  const cDayLabel = (iso, short = false) => {
+    const i = C_DAYS.indexOf(iso);
+    const base = OB.fsDate(iso, short ? { day: 'numeric', month: 'short' } : { weekday: 'short', day: 'numeric', month: 'long' });
+    return i === 0 ? `Today, ${base.replace(/^\w+, /, '')}` : i === 1 ? `Tomorrow, ${base.replace(/^\w+, /, '')}` : base;
+  };
+  OB.cDayLabel = cDayLabel;
+  const cTile = (c) => `<span class="c-tile" style="--c:${c.color}">${c.short[0]}</span>`;
+  const cOpt = (k, v, inner, sel) => `<button class="c-opt" type="button" role="option" data-action="c-pick" data-k="${k}" data-v="${esc(v)}" aria-selected="${sel}">${inner}${sel ? icon('check', 'opt-check') : ''}</button>`;
+  const cinemaPop = (key) => {
+    const fs = OB.state.fs;
+    if (key === 'cchain') return `
+      <div class="sf-pop c-pop" role="listbox" aria-label="Select cinema">
+        ${cOpt('chain', '', `<span class="c-tile c-tile-all">${icon('film')}</span><span class="c-text"><strong>All cinemas</strong><small>${OB.cinemaChains.reduce((n, c) => n + c.branches.length, 0)} locations</small></span>`, !fs.mChain)}
+        ${OB.cinemaChains.map((c) => cOpt('chain', c.id, `${cTile(c)}<span class="c-text"><strong>${c.name}</strong><small>${c.branches.length} location${c.branches.length > 1 ? 's' : ''}</small></span>`, fs.mChain === c.id)).join('')}
+      </div>`;
+    if (key === 'cbranch') {
+      const chains = fs.mChain ? OB.cinemaChains.filter((c) => c.id === fs.mChain) : OB.cinemaChains;
+      return `
+      <div class="sf-pop c-pop" role="listbox" aria-label="Select cinema location">
+        ${cOpt('branch', '', `<span class="c-pin">${icon('pin')}</span><span class="c-text"><strong>All locations</strong><small>${fs.mChain ? chains[0].name : 'Every cinema'}</small></span>`, !fs.mBranch)}
+        ${chains.map((c) => `${fs.mChain ? '' : `<h4 class="c-group">${c.name}</h4>`}${c.branches.map(([b, area]) => cOpt('branch', b, `<span class="c-pin">${icon('pin')}</span><span class="c-text"><strong>${b}</strong><small>${area}</small></span>`, fs.mBranch === b)).join('')}`).join('')}
+      </div>`;
+    }
+    return `
+      <div class="sf-pop c-pop c-date-pop" role="listbox" aria-label="Select date">
+        <h4 class="c-group">Showtimes this week</h4>
+        <div class="c-days">${C_DAYS.map((d, i) => `
+          <button class="c-day" type="button" role="option" data-action="c-pick" data-k="date" data-v="${d}" aria-selected="${fs.mDate === d}">
+            <small>${i === 0 ? 'Today' : i === 1 ? 'Tmrw' : OB.fsDate(d, { weekday: 'short' })}</small><strong>${OB.fsDate(d, { day: 'numeric' })}</strong><small>${OB.fsDate(d, { month: 'short' })}</small>
+          </button>`).join('')}</div>
+      </div>`;
+  };
+  const cField = (key, ic, label, value, empty) => {
+    const open = OB.state.fs.pop === key;
+    return `<div class="sf-anchor c-anchor">
+      <button class="sfield c-field ${open ? 'is-open' : ''}" type="button" data-action="fs-pop" data-pop="${key}" aria-expanded="${open}" aria-haspopup="listbox">
+        <span class="sfield-icon">${icon(ic)}</span>
+        <span class="sfield-body"><span class="sf-label">${label}</span><span class="sf-value ${empty ? 'is-empty' : ''}">${value}</span></span>
+        ${icon('chevronDown', 'sf-caret')}
+      </button>${open ? cinemaPop(key) : ''}</div>`;
+  };
+  OB.cinemaSearch = () => {
+    const fs = OB.state.fs; const chain = OB.cinemaChains.find((c) => c.id === fs.mChain);
+    return `
+      <p class="search-title">Find your next movie to watch</p>
+      <div class="search-fields c-fields">
+        ${cField('cchain', 'ticket', 'Select cinema', chain ? chain.name : 'All cinemas', !chain)}
+        ${cField('cbranch', 'pin', 'Select cinema location', fs.mBranch || 'All locations', !fs.mBranch)}
+        ${cField('cdate', 'calendar', 'Select date', cDayLabel(fs.mDate), false)}
+      </div>`;
+  };
+
   const Q_CFG = {
     events: { label: 'Search events', ph: 'Artist, event or venue', go: 'events', btn: 'Find events', empty: 'Try an artist, venue or “comedy”.',
       list: () => OB.events, href: (e) => `#event~${e.id}`, hay: (e) => [e.title, e.venue, e.city, e.category],
@@ -256,26 +309,7 @@ window.OB = window.OB || {};
         </div>`;
       case 'events': return OB.qSearch('events');
       case 'experiences': return OB.qSearch('experiences');
-      case 'movies': {
-        const fs = OB.state.fs;
-        const chain = OB.cinemaChains.find((c) => c.id === fs.mChain);
-        const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(Date.UTC(2026, 9, 16 + i)); return d.toISOString().slice(0, 10); });
-        const lbl = (iso, i) => (i === 0 ? 'Today, ' : i === 1 ? 'Tomorrow, ' : '') + OB.fsDate(iso, i < 2 ? { day: 'numeric', month: 'long', year: 'numeric' } : { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
-        const sel = (id, ic, label, action, opts, val) => `
-          <div class="sfield">
-            <span class="sfield-icon">${icon(ic)}</span>
-            <div class="sfield-body"><label for="${id}">${label}</label>
-              <select id="${id}" data-action="${action}">${opts.map(([v, t]) => `<option value="${esc(v)}" ${v === val ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></div>
-          </div>`;
-        return `
-        <p class="search-title">Find your next movie to watch</p>
-        <div class="search-fields">
-          ${sel('m-chain', 'ticket', 'Select cinema', 'm-chain', [['', 'All cinemas'], ...OB.cinemaChains.map((c) => [c.id, c.name])], fs.mChain)}
-          ${sel('m-branch', 'pin', 'Select cinema location', 'm-branch', chain ? [['', 'All locations'], ...chain.branches.map((b) => [b, b])] : [['', 'Choose a cinema first']], fs.mBranch)}
-          ${sel('m-date', 'calendar', 'Select date', 'm-date', days.map((d, i) => [d, lbl(d, i)]), fs.mDate)}
-          ${go('movies', 'Find showtimes')}
-        </div>`;
-      }
+      case 'movies': return OB.cinemaSearch();
       case 'extras': return `
         <div class="search-fields">
           ${sfield('a-airport', 'pin', 'Departure airport', 'Lagos (LOS), Terminal 2', { wide: true, options: ['Lagos (LOS), Terminal 2', 'Lagos (LOS), MMA2 domestic', 'Abuja (ABV)', 'Port Harcourt (PHC)'] })}

@@ -228,17 +228,25 @@ window.OB = window.OB || {};
   };
 
   /* ---------- Movies ---------- */
-  OB.pages.movies = () => `
+  OB.pages.movies = () => {
+    const fs = OB.state.fs;
+    const chain = OB.cinemaChains.find((c) => c.id === fs.mChain);
+    const branchChain = fs.mBranch ? OB.cinemaChains.find((c) => c.branches.some(([b]) => b === fs.mBranch)) : null;
+    const want = branchChain || chain;
+    const list = OB.movies.filter((m) => { const s2 = OB.movieShowing[m.id]; return (!want || s2.chains.includes(want.id)) && (!s2.opens || s2.opens <= fs.mDate); });
+    const where = fs.mBranch || (chain ? chain.name : 'all cinemas');
+    return `
     ${OB.nav()}
-    <section class="hero" style="padding-top:0"><div class="hero-bg"><img src="${img('hero-movies')}" alt=""></div>
-      <div class="container hero-inner" style="padding-block:48px"><div><h1>Big screen magic. Your seat awaits.</h1><p class="lede">Showtimes and seat selection for cinemas across Lagos, Abuja and Port Harcourt.</p></div>
-      <form class="search-card" data-form="search" aria-label="Movie search">${OB.searchForm('movies')}</form></div></section>
-    <main class="container page-body" style="gap:32px">
-      <div class="section-head"><div><h2>Now showing in Lagos</h2><p>${OB.movies.length} movies · Today, 14 Oct</p></div>
-        <div class="seg" role="group" aria-label="Format"><button type="button" aria-pressed="true">All</button><button type="button" aria-pressed="false" data-action="toast" data-msg="IMAX filter uses the same grid.">IMAX</button></div></div>
-      <div class="grid-4">${OB.movies.map(OB.movieCard).join('')}</div>
+    <div class="list-search"><div class="container">
+      <div class="list-search-head"><h1>Movies</h1><p>Showtimes and seats at cinemas across Nigeria.</p></div>
+      <div class="search-card list-search-card">${OB.cinemaSearch()}</div>
+    </div></div>
+    <main class="container page-body" style="gap:24px;padding-top:28px">
+      <div class="section-head"><div><h2>Now showing at ${esc(where)}</h2><p>${list.length} movie${list.length === 1 ? '' : 's'} · ${OB.cDayLabel(fs.mDate)}</p></div></div>
+      ${list.length ? `<div class="grid-4">${list.map(OB.movieCard).join('')}</div>` : `<div class="panel empty">${icon('film')}<strong style="color:var(--ink)">No showtimes yet for this day</strong><span>Try another date or location.</span></div>`}
     </main>
     ${OB.footer()}`;
+  };
 
   const TAKEN = new Set(['A4', 'A5', 'B7', 'B8', 'C2', 'C3', 'C10', 'D6', 'D7', 'D8', 'E11', 'E12', 'F1', 'F2', 'G5', 'G6', 'G9', 'H3', 'H4', 'H12', 'J6', 'J7']);
   OB.movieOrder = (m) => {
