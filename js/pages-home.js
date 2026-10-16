@@ -245,7 +245,6 @@ window.OB = window.OB || {};
         </div>
         <div class="cal-grid cal-dow">${['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((x) => `<span>${x}</span>`).join('')}</div>
         <div class="cal-grid">${cells.join('')}</div>
-        <p class="c-cal-note">Showtimes are published up to 30 Nov</p>
       </div>`;
   };
   const cField = (key, ic, label, value, empty) => {
