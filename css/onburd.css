@@ -444,6 +444,11 @@ button.sfield:hover { border-color: var(--ink-2); }
 .c-fields .c-anchor { flex: 1 1 0; }
 .c-field .sf-value { display: block; }
 .c-pop { left: 0; width: max(100%, 320px); padding: 6px; display: grid; gap: 2px; max-height: 420px; overflow-y: auto; }
+.c-search { display: flex; align-items: center; gap: 8px; margin: 2px 2px 6px; padding: 0 10px; height: 38px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); }
+.c-search:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-50); }
+.c-search .icon { width: 16px; height: 16px; color: var(--muted); flex: none; }
+.c-search input { flex: 1; min-width: 0; border: 0; outline: none; background: none; font-size: var(--fs-sm); padding: 0; }
+.c-none { padding: 14px 10px; font-size: var(--fs-sm); color: var(--muted); text-align: center; }
 .c-opt { display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 10px; border: 0; border-radius: 10px; background: none; text-align: left; color: var(--ink); }
 .c-opt:hover { background: var(--surface-2); }
 .c-opt[aria-selected="true"] { background: var(--blue-50); }

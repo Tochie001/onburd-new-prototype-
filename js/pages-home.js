@@ -206,11 +206,16 @@ window.OB = window.OB || {};
   const cOpt = (k, v, inner, sel) => `<button class="c-opt" type="button" role="option" data-action="c-pick" data-k="${k}" data-v="${esc(v)}" aria-selected="${sel}">${inner}${sel ? icon('check', 'opt-check') : ''}</button>`;
   const cinemaPop = (key) => {
     const fs = OB.state.fs;
-    if (key === 'cchain') return `
+    if (key === 'cchain') {
+      const q = (fs.cQuery || '').trim().toLowerCase();
+      const hits = OB.cinemaChains.filter((c) => !q || c.name.toLowerCase().includes(q) || c.branches.some(([b, area]) => (b + ' ' + area).toLowerCase().includes(q)));
+      return `
       <div class="sf-pop c-pop" role="listbox" aria-label="Select cinema">
-        ${cOpt('chain', '', `<span class="c-tile c-tile-all">${icon('film')}</span><span class="c-text"><strong>All cinemas</strong><small>${OB.cinemaChains.reduce((n, c) => n + c.branches.length, 0)} locations</small></span>`, !fs.mChain)}
-        ${OB.cinemaChains.map((c) => cOpt('chain', c.id, `${cTile(c)}<span class="c-text"><strong>${c.name}</strong><small>${c.branches.length} location${c.branches.length > 1 ? 's' : ''}</small></span>`, fs.mChain === c.id)).join('')}
+        <div class="c-search">${icon('search')}<input id="c-q" type="search" placeholder="Search cinemas" value="${esc(fs.cQuery || '')}" data-action="c-q" autocomplete="off" aria-label="Search cinemas"></div>
+        ${hits.length ? hits.map((c) => cOpt('chain', c.id, `<span class="c-text"><strong>${c.name}</strong><small>${c.branches.length} location${c.branches.length > 1 ? 's' : ''}</small></span>`, fs.mChain === c.id)).join('')
+          : `<p class="c-none">No cinemas match “${esc(fs.cQuery)}”</p>`}
       </div>`;
+    }
     if (key === 'cbranch') {
       const chains = fs.mChain ? OB.cinemaChains.filter((c) => c.id === fs.mChain) : OB.cinemaChains;
       return `
@@ -242,7 +247,7 @@ window.OB = window.OB || {};
     return `
       <p class="search-title">Find your next movie to watch</p>
       <div class="search-fields c-fields">
-        ${cField('cchain', 'ticket', 'Select cinema', chain ? chain.name : 'All cinemas', !chain)}
+        ${cField('cchain', 'ticket', 'Select cinema', chain ? chain.name : 'Choose a cinema', !chain)}
         ${cField('cbranch', 'pin', 'Select cinema location', fs.mBranch || 'All locations', !fs.mBranch)}
         ${cField('cdate', 'calendar', 'Select date', cDayLabel(fs.mDate), false)}
       </div>`;

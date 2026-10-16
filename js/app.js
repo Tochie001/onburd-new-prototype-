@@ -202,6 +202,7 @@ window.OB = window.OB || {};
         fs.pop = 'ap'; fs.apKey = k; fs.apQuery = ''; render(); $('#ap-q')?.focus(); return;
       }
       fs.pop = el.dataset.pop;
+      if (fs.pop === 'cchain') { fs.cQuery = ''; render(); document.getElementById('c-q')?.focus(); return; }
       if (el.dataset.pick) {
         fs.picking = el.dataset.pick;
         if (fs.picking === 'ret' && fs.trip === 'oneway') { fs.trip = 'round'; fs.ret = null; }
@@ -238,7 +239,7 @@ window.OB = window.OB || {};
     'c-pick': (el) => {
       const fs = S.fs; const k = el.dataset.k; const v = el.dataset.v;
       const onHome = /^#home2?(~|$)/.test(location.hash) || location.hash === '';
-      if (k === 'chain') { fs.mChain = v; fs.mBranch = ''; fs.pop = 'cbranch'; render(); return; }
+      if (k === 'chain') { fs.mChain = v; fs.mBranch = ''; fs.cQuery = ''; fs.pop = 'cbranch'; render(); return; }
       if (k === 'branch') {
         fs.mBranch = v;
         if (v && !fs.mChain) fs.mChain = OB.cinemaChains.find((c) => c.branches.some(([b]) => b === v))?.id || '';
@@ -335,6 +336,7 @@ window.OB = window.OB || {};
   document.addEventListener('input', (ev) => {
     const el = ev.target;
     if (el.dataset.action === 'filter-price') actions['filter-price'](el);
+    if (el.dataset.action === 'c-q') { S.fs.cQuery = el.value; render(); }
     if (el.dataset.action === 'list-q') { S.listQ[el.dataset.kind] = el.value; render(); }
     if (el.dataset.action === 'q-input') { S.fs.qText = el.value; S.fs.qKind = el.dataset.kind; S.fs.pop = 'q'; render(); }
     if (el.dataset.action === 'ap-q') {
@@ -359,6 +361,7 @@ window.OB = window.OB || {};
     if (ev.key === 'Escape' && S.overlay) closeOverlay();
     if (ev.key === 'Escape' && S.fs.pop) { S.fs.pop = null; render(); }
     const el = ev.target;
+    if (ev.key === 'Enter' && el.id === 'c-q') { ev.preventDefault(); document.querySelector('.c-pop .c-opt')?.click(); }
     if (ev.key === 'Enter' && el.id === 'ap-q') { ev.preventDefault(); document.querySelector('.ap-pop .ap-row, .ap-pop .ap-chip')?.click(); }
     if (el.dataset?.otp !== undefined && ev.key === 'Backspace' && !el.value) document.getElementById('otp-' + (+el.dataset.otp - 1))?.focus();
   });
