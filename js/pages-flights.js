@@ -9,7 +9,7 @@ window.OB = window.OB || {};
     const route = fs.trip === 'multi' ? OB.routeTitle() : `${OB.cityOf(fs.from)} → ${OB.cityOf(fs.to)}`;
     const dates = fs.trip === 'multi' ? `${fs.legs.length} flights` : `${OB.fsShort(fs.dep)}${fs.trip === 'round' && fs.ret ? ' – ' + OB.fsShort(fs.ret) : ''}`;
     return `
-    <div class="searchbar ${open ? 'is-open' : ''}"><div class="container">
+    <div class="searchbar searchbar-collapse ${open ? 'is-open' : ''}"><div class="container">
       <button class="search-summary" type="button" data-action="toggle-search" aria-expanded="${open}">
         <span class="search-summary-text"><strong>${OB.esc(route)}</strong><small>${dates} · ${OB.paxShort()} · ${fs.cabin}</small></span>
         <span class="search-summary-edit">${open ? 'Close' : 'Edit'} ${icon(open ? 'x' : 'edit')}</span>

@@ -237,8 +237,10 @@ window.OB = window.OB || {};
     const where = fs.mBranch || (chain ? chain.name : '');
     return `
       <section class="section" aria-live="polite">
-        <div class="section-head"><div><h2>Now showing${where ? ` at ${esc(where)}` : ''}</h2><p>${list.length} movie${list.length === 1 ? '' : 's'} · ${OB.cDayLabel(fs.mDate)}</p></div></div>
-        ${list.length ? `<div class="grid-4">${list.map(OB.movieCard).join('')}</div>` : `<div class="panel empty">${icon('film')}<strong style="color:var(--ink)">No showtimes yet for this day</strong><span>Try another date or location.</span></div>`}
+        <div class="section-head"><div><h2>Now showing${where ? ` at ${esc(where)}` : ''}</h2><p>${OB.state.moviesLoading ? 'Loading showtimes…' : `${list.length} movie${list.length === 1 ? '' : 's'}`} · ${OB.cDayLabel(fs.mDate)}</p></div></div>
+        ${OB.state.moviesLoading
+          ? `<div class="grid-4" aria-busy="true">${Array.from({ length: 4 }, () => `<div class="sk-card" aria-hidden="true"><span class="skel sk-poster"></span><span class="skel sk-line w80"></span><span class="skel sk-line w50"></span></div>`).join('')}</div>`
+          : list.length ? `<div class="grid-4">${list.map(OB.movieCard).join('')}</div>` : `<div class="panel empty">${icon('film')}<strong style="color:var(--ink)">No showtimes yet for this day</strong><span>Try another date or location.</span></div>`}
       </section>`;
   };
 
@@ -368,7 +370,6 @@ window.OB = window.OB || {};
               : `<div class="summary"><h3>Price summary</h3><p class="muted text-sm">Add a service to see your total.</p><button class="btn btn-primary btn-lg btn-block" type="button" disabled>Continue to payment</button></div>`}
           </div>
         </div>
-        ${OB.newsletter()}
       </main>
       ${OB.footer()}`;
   };

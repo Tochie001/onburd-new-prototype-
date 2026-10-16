@@ -467,6 +467,7 @@ button.sfield:hover { border-color: var(--ink-2); }
 .c-cal-head h4 { font-size: var(--fs-sm); }
 .c-cal-head .icon-btn { width: 32px; height: 32px; }
 .c-cal-pop .cal-day.is-start::before { inset: 0 2px; }
+.sk-poster { aspect-ratio: 2 / 3; border-radius: var(--r-md); }
 .c-cal-note { font-size: var(--fs-2xs); color: var(--muted); text-align: center; margin-top: 8px; }
 @media (max-width: 860px) {
   .c-fields { flex-direction: column; }
@@ -1090,8 +1091,8 @@ button.fm-cell:hover { color: var(--blue-700); background: var(--blue-50); }
   .search-summary-text strong { font-size: var(--fs-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .search-summary-text small { font-size: var(--fs-xs); color: var(--muted); }
   .search-summary-edit { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); font-weight: 700; color: var(--blue-600); flex: none; }
-  .searchbar:not(.is-open) .search-card { display: none; }
-  .searchbar.is-open .search-summary { margin-bottom: 10px; }
+  .searchbar-collapse:not(.is-open) .search-card { display: none; }
+  .searchbar-collapse.is-open .search-summary { margin-bottom: 10px; }
   .searchbar { padding-block: 12px; }
   .event-poster { aspect-ratio: 16 / 10; max-width: 100%; border-radius: var(--r-lg); }
   .panel-head { flex-wrap: wrap; }

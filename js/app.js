@@ -243,13 +243,19 @@ window.OB = window.OB || {};
     },
     'c-pick': (el) => {
       const fs = S.fs; const k = el.dataset.k; const v = el.dataset.v;
-      if (k === 'chain') { fs.mChain = v; fs.mBranch = ''; fs.cQuery = ''; fs.pop = 'cbranch'; render(); return; }
+      const loadMovies = () => {
+        if (location.hash !== '#movies') return;
+        S.moviesLoading = true; clearTimeout(S.moviesTimer);
+        S.moviesTimer = setTimeout(() => { S.moviesLoading = false; if (location.hash === '#movies') render(); }, 800);
+      };
+      if (k === 'chain') { fs.mChain = v; fs.mBranch = ''; fs.cQuery = ''; fs.pop = 'cbranch'; loadMovies(); render(); return; }
       if (k === 'branch') {
         fs.mBranch = v;
         if (v && !fs.mChain) fs.mChain = OB.cinemaChains.find((c) => c.branches.some(([b]) => b === v))?.id || '';
       }
       if (k === 'date') fs.mDate = v;
       fs.pop = null;
+      loadMovies();
       render();
     },
     'fs-opt': (el) => {
