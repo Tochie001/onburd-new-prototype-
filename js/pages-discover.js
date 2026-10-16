@@ -228,13 +228,21 @@ window.OB = window.OB || {};
   };
 
   /* ---------- Movies ---------- */
-  OB.pages.movies = () => {
+  OB.nowShowing = () => {
     const fs = OB.state.fs;
     const chain = OB.cinemaChains.find((c) => c.id === fs.mChain);
     const branchChain = fs.mBranch ? OB.cinemaChains.find((c) => c.branches.some(([b]) => b === fs.mBranch)) : null;
     const want = branchChain || chain;
     const list = OB.movies.filter((m) => { const s2 = OB.movieShowing[m.id]; return (!want || s2.chains.includes(want.id)) && (!s2.opens || s2.opens <= fs.mDate); });
-    const where = fs.mBranch || (chain ? chain.name : 'all cinemas');
+    const where = fs.mBranch || (chain ? chain.name : '');
+    return `
+      <section class="section" aria-live="polite">
+        <div class="section-head"><div><h2>Now showing${where ? ` at ${esc(where)}` : ''}</h2><p>${list.length} movie${list.length === 1 ? '' : 's'} · ${OB.cDayLabel(fs.mDate)}</p></div></div>
+        ${list.length ? `<div class="grid-4">${list.map(OB.movieCard).join('')}</div>` : `<div class="panel empty">${icon('film')}<strong style="color:var(--ink)">No showtimes yet for this day</strong><span>Try another date or location.</span></div>`}
+      </section>`;
+  };
+
+  OB.pages.movies = () => {
     return `
     ${OB.nav()}
     <div class="list-search"><div class="container">
@@ -242,8 +250,7 @@ window.OB = window.OB || {};
       <div class="search-card list-search-card">${OB.cinemaSearch()}</div>
     </div></div>
     <main class="container page-body" style="gap:24px;padding-top:28px">
-      <div class="section-head"><div><h2>Now showing at ${esc(where)}</h2><p>${list.length} movie${list.length === 1 ? '' : 's'} · ${OB.cDayLabel(fs.mDate)}</p></div></div>
-      ${list.length ? `<div class="grid-4">${list.map(OB.movieCard).join('')}</div>` : `<div class="panel empty">${icon('film')}<strong style="color:var(--ink)">No showtimes yet for this day</strong><span>Try another date or location.</span></div>`}
+      ${OB.nowShowing()}
     </main>
     ${OB.footer()}`;
   };

@@ -238,7 +238,6 @@ window.OB = window.OB || {};
     },
     'c-pick': (el) => {
       const fs = S.fs; const k = el.dataset.k; const v = el.dataset.v;
-      const onHome = /^#home2?(~|$)/.test(location.hash) || location.hash === '';
       if (k === 'chain') { fs.mChain = v; fs.mBranch = ''; fs.cQuery = ''; fs.pop = 'cbranch'; render(); return; }
       if (k === 'branch') {
         fs.mBranch = v;
@@ -246,7 +245,7 @@ window.OB = window.OB || {};
       }
       if (k === 'date') fs.mDate = v;
       fs.pop = null;
-      if (onHome) go('movies'); else render();
+      render();
     },
     'fs-opt': (el) => {
       const fs = S.fs;

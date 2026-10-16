@@ -478,6 +478,10 @@ window.OB = window.OB || {};
     const order = [tab, ...['flights', 'events', 'experiences', 'movies', 'hotels', 'extras'].filter((x) => x !== tab)].filter(shown);
     const wide = heroFn === OB.hero2 ? 'container-wide' : '';
     if (OB.state.homeLoading) return `${heroFn(tab)}${OB.homeSkeleton(wide)}${OB.footer()}`;
+    if (tab === 'movies') return `
+      ${heroFn(tab)}
+      <main class="container page-body ${wide}">${OB.nowShowing()}</main>
+      ${OB.footer()}`;
     const bodyRails = order.map((k) => sections[k]());
     return `
       ${heroFn(tab)}
