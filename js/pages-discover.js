@@ -141,7 +141,7 @@ window.OB = window.OB || {};
       <main class="container page-body" style="gap:24px;padding-top:28px">
         ${cityToolbar('Experiences from', cats, OB.state.expCat, 'exp-cat')}
         ${q ? `<p class="text-sm muted">${list.length} result${list.length === 1 ? '' : 's'} for “${esc(q)}”</p>` : ''}
-        ${list.length ? `<div class="grid-3">${list.slice(0, 9).map(OB.expCard).join('')}</div>` : `<div class="panel empty">${icon('compass')}<strong style="color:var(--ink)">No experiences match “${esc(q)}”</strong><span>Try a place like Egypt or Lagos.</span></div>`}
+        ${list.length ? `<div class="grid-4">${list.slice(0, 12).map(OB.expCard).join('')}</div>` : `<div class="panel empty">${icon('compass')}<strong style="color:var(--ink)">No experiences match “${esc(q)}”</strong><span>Try a place like Egypt or Lagos.</span></div>`}
         ${q ? '' : pager(8)}
       </main>
       ${OB.footer()}`;
