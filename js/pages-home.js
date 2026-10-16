@@ -195,6 +195,47 @@ window.OB = window.OB || {};
       </div>`;
   };
 
+  const Q_CFG = {
+    events: { label: 'Search events', ph: 'Artist, event or venue', go: 'events', btn: 'Find events', empty: 'Try an artist, venue or “comedy”.',
+      list: () => OB.events, href: (e) => `#event~${e.id}`, hay: (e) => [e.title, e.venue, e.city, e.category],
+      meta: (e) => `${e.date} · ${e.venue}`, price: (e) => `From ${OB.fmt(e.price)}` },
+    experiences: { label: 'Search experiences', ph: 'Tours, day trips, spa days, places…', go: 'experiences', btn: 'Find experiences', empty: 'Try a place like “Egypt” or “Lagos”, or “safari”.',
+      list: () => OB.experiences, href: (x) => `#experience~${x.id}`, hay: (x) => [x.title, x.place, x.by],
+      meta: (x) => `${x.place} · ★ ${x.rating.toFixed(1)}`, price: (x) => `${OB.fmt(x.price)} / ${x.unit}` }
+  };
+  const qHl = (t, q) => { if (!q) return esc(t); const i = t.toLowerCase().indexOf(q.toLowerCase()); return i < 0 ? esc(t) : `${esc(t.slice(0, i))}<mark>${esc(t.slice(i, i + q.length))}</mark>${esc(t.slice(i + q.length))}`; };
+  const qPop = (kind) => {
+    const c = Q_CFG[kind]; const q = OB.state.fs.qText.trim(); const ql = q.toLowerCase();
+    const items = q ? c.list().filter((it) => c.hay(it).some((v) => v.toLowerCase().includes(ql))) : c.list().slice(0, 5);
+    const rows = items.slice(0, 6).map((it) => `
+      <a class="q-row" href="${c.href(it)}">
+        <img src="${img(it.img)}" alt="">
+        <span class="q-text"><strong>${qHl(it.title, q)}</strong><small>${qHl(c.meta(it), q)}</small></span>
+        <span class="q-price">${c.price(it)}</span>
+      </a>`).join('');
+    return `
+      <div class="sf-pop q-pop" role="listbox" aria-label="${c.label}">
+        ${q ? (items.length ? `<h4>${items.length} result${items.length > 1 ? 's' : ''}</h4>${rows}${items.length > 6 ? `<button class="q-all" type="submit" data-go="${c.go}">See all ${items.length} results ${icon('arrowRight')}</button>` : ''}`
+          : `<div class="ap-empty">${icon('search')}<strong>Nothing matches “${esc(q)}”</strong><span>${c.empty}</span></div>`)
+          : `<h4>Popular right now</h4>${rows}`}
+      </div>`;
+  };
+  OB.qSearch = (kind) => {
+    const c = Q_CFG[kind]; const fs = OB.state.fs; const open = fs.pop === 'q' && fs.qKind === kind;
+    return `
+      <div class="search-fields">
+        <div class="sf-anchor q-anchor">
+          <label class="sfield q-field ${open ? 'is-open' : ''}" for="q-${kind}">
+            <span class="sfield-icon">${icon('search')}</span>
+            <span class="sfield-body"><span class="sf-label">${c.label}</span>
+              <input id="q-${kind}" type="search" placeholder="${c.ph}" value="${esc(fs.qKind === kind ? fs.qText : '')}" data-action="q-input" data-kind="${kind}" autocomplete="off" aria-expanded="${open}" aria-haspopup="listbox"></span>
+          </label>
+          ${open ? qPop(kind) : ''}
+        </div>
+        ${go(c.go, c.btn)}
+      </div>`;
+  };
+
   OB.TABS = [
     { id: 'flights', label: 'Flights', icon: 'plane', hero: 'hero-balloons', pos: '50% 12%' },
     { id: 'hotels', label: 'Hotels', icon: 'bed', hero: 'dest-maldives', hidden: true },
@@ -213,21 +254,8 @@ window.OB = window.OB || {};
           ${sfield('h-guests', 'users', 'Guests and rooms', '2 adults · 1 room')}
           ${go('hotels', 'Search hotels')}
         </div>`;
-      case 'events': return `
-        <div class="search-fields">
-          ${sfield('e-q', 'search', 'Artist, event or venue', '', { wide: true, placeholder: 'Try “Afrobeats” or “Terra Kulture”' })}
-          ${sfield('e-city', 'pin', 'City', 'Lagos', { options: ['Lagos', 'Abuja', 'Port Harcourt', 'Delta', 'Accra'] })}
-          ${sfield('e-cat', 'grid', 'Category', 'All categories', { options: ['All categories', 'Concerts', 'Comedy', 'Theatre', 'Festivals', 'Parties', 'Food & drink'] })}
-          ${sfield('e-date', 'calendar', 'Date', 'Any date', { options: ['Any date', 'This weekend', 'Next 7 days', 'December'] })}
-          ${go('events', 'Find events')}
-        </div>`;
-      case 'experiences': return `
-        <div class="search-fields">
-          ${sfield('x-q', 'search', 'What do you want to do?', '', { wide: true, placeholder: 'Tours, day trips, spa days…' })}
-          ${sfield('x-where', 'pin', 'Where', 'Anywhere', { options: ['Anywhere', 'Lagos', 'Abuja', 'Ghana', 'Egypt', 'UAE', 'Maldives'] })}
-          ${sfield('x-date', 'calendar', 'When', 'Any date', { options: ['Any date', 'This weekend', 'December holidays', 'Easter 2027'] })}
-          ${go('experiences', 'Find experiences')}
-        </div>`;
+      case 'events': return OB.qSearch('events');
+      case 'experiences': return OB.qSearch('experiences');
       case 'movies': return `
         <div class="search-fields">
           ${sfield('m-city', 'pin', 'City', 'Lagos', { options: ['Lagos', 'Abuja', 'Port Harcourt', 'Ibadan'] })}

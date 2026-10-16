@@ -9,7 +9,7 @@ window.OB = window.OB || {};
     tab: 'flights',
     favs: new Set(['isimi-lagos']),
     ff: { sort: 'cheapest', stops: 'any', hiddenAirlines: new Set(), refundable: false, maxPrice: 1400000 },
-    fs: { from: 'Lagos (LOS)', to: 'Dubai (DXB)', apKey: null, apQuery: '', recent: ['LHR', 'ACC'], trip: 'round', cabin: 'Economy', dep: '2026-12-18', ret: '2027-01-03', adults: 1, children: 0, infants: 0, pop: null, picking: 'dep', calMonth: '2026-12', mIdx: 0,
+    fs: { qText: '', qKind: null, from: 'Lagos (LOS)', to: 'Dubai (DXB)', apKey: null, apQuery: '', recent: ['LHR', 'ACC'], trip: 'round', cabin: 'Economy', dep: '2026-12-18', ret: '2027-01-03', adults: 1, children: 0, infants: 0, pop: null, picking: 'dep', calMonth: '2026-12', mIdx: 0,
       legs: [{ from: 'Lagos (LOS)', to: 'Dubai (DXB)', date: '2026-12-18' }, { from: 'Dubai (DXB)', to: 'London (LHR)', date: '2026-12-27' }] },
     openFlight: null,
     searchOpen: false,
@@ -285,7 +285,12 @@ window.OB = window.OB || {};
   };
 
   document.addEventListener('click', (ev) => {
-    if (S.fs.pop && !ev.target.closest('.sf-pop, [data-action="fs-pop"]')) {
+    const qIn = ev.target.closest('[data-action="q-input"]');
+    if (qIn && !(S.fs.pop === 'q' && S.fs.qKind === qIn.dataset.kind)) {
+      if (S.fs.qKind !== qIn.dataset.kind) S.fs.qText = '';
+      S.fs.pop = 'q'; S.fs.qKind = qIn.dataset.kind; render(); return;
+    }
+    if (S.fs.pop && !ev.target.closest('.sf-pop, [data-action="fs-pop"], .q-field')) {
       S.fs.pop = null;
       if (!ev.target.closest('[data-action], a, button, input, select, label')) { render(); return; }
       render();
@@ -314,6 +319,7 @@ window.OB = window.OB || {};
   document.addEventListener('input', (ev) => {
     const el = ev.target;
     if (el.dataset.action === 'filter-price') actions['filter-price'](el);
+    if (el.dataset.action === 'q-input') { S.fs.qText = el.value; S.fs.qKind = el.dataset.kind; S.fs.pop = 'q'; render(); }
     if (el.dataset.action === 'ap-q') {
       S.fs.apQuery = el.value; const pos = el.selectionStart; render();
       const n = $('#ap-q'); if (n) { n.focus(); n.setSelectionRange(pos, pos); }

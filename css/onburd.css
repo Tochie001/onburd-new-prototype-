@@ -416,6 +416,23 @@ button.sfield:hover { border-color: var(--ink-2); }
 .sfield-pair .ap-anchor:last-child .ap-field { padding-left: 26px; }
 .sfield-pair .ap-anchor:first-child .ap-field { padding-right: 24px; }
 
+.q-anchor { flex: 1 1 auto; }
+.q-field { cursor: text; }
+.q-field input { border: 0; padding: 0; background: transparent; font-weight: 700; font-size: var(--fs-body); color: var(--ink); width: 100%; outline: none; min-width: 0; }
+.q-field input::placeholder { color: var(--subtle); font-weight: 600; }
+.q-field input::-webkit-search-cancel-button { cursor: pointer; }
+.q-pop { left: 0; right: 0; padding: 8px; max-height: 440px; overflow-y: auto; }
+.q-pop h4 { font-size: var(--fs-2xs); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; padding: 8px 10px 6px; }
+.q-row { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 10px; border-radius: 10px; color: var(--ink); }
+.q-row:hover, .q-row:focus-visible { background: var(--surface-2); text-decoration: none; }
+.q-row img { width: 56px; height: 42px; border-radius: 8px; object-fit: cover; }
+.q-text { display: grid; min-width: 0; }
+.q-text strong { font-size: var(--fs-sm); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.q-text small { font-size: var(--fs-xs); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.q-price { font-size: var(--fs-xs); font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.q-row mark { background: var(--blue-100); color: inherit; border-radius: 2px; }
+.q-all { width: 100%; border: 0; background: none; color: var(--blue-600); font-weight: 700; font-size: var(--fs-sm); padding: 10px; display: flex; justify-content: center; align-items: center; gap: 6px; border-top: 1px solid var(--line); margin-top: 4px; }
+
 /* compact search bar used on results pages */
 .searchbar { background: var(--navy); padding-block: 16px; }
 .searchbar .search-card { max-width: none; box-shadow: none; padding: 14px; border-radius: var(--r-lg); }
@@ -1209,6 +1226,9 @@ button.fm-cell:hover { color: var(--blue-700); background: var(--blue-50); }
   .sf-dates-wrap, .sf-pax-wrap { flex-basis: 100%; }
   .ap-pop { left: 0; right: 0; width: auto; }
   .ap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .q-row { grid-template-columns: 48px minmax(0, 1fr); }
+  .q-row img { width: 48px; height: 40px; }
+  .q-price { grid-column: 2; margin-top: -4px; }
   .ap-body { max-height: 52vh; }
   .mc-row { grid-template-columns: minmax(0, 1fr) auto; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
   .mc-row .sfield-pair { grid-column: 1 / -1; }
