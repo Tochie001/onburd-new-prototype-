@@ -349,11 +349,17 @@ window.OB = window.OB || {};
     const order = OB.addonOrder();
     return `
       ${OB.nav({ current: 'extras' })}
-      <div class="searchbar"><div class="container"><form class="search-card" data-form="search" aria-label="Travel extras search">${OB.searchForm('extras')}</form></div></div>
+      <div class="searchbar searchbar-collapse ${OB.state.exOpen ? 'is-open' : ''}"><div class="container">
+        <button class="search-summary" type="button" data-action="toggle-ex-search" aria-expanded="${!!OB.state.exOpen}">
+          <span class="search-summary-text"><strong>${esc(OB.state.ex.airport)}</strong><small>${esc(OB.state.ex.date)} · ${esc(OB.state.ex.pax)}</small></span>
+          <span class="search-summary-edit">${OB.state.exOpen ? 'Close' : 'Edit'} ${icon(OB.state.exOpen ? 'x' : 'edit')}</span>
+        </button>
+        <form class="search-card" data-form="search" aria-label="Travel extras search">${OB.searchForm('extras')}</form>
+      </div></div>
       <main class="container page-body" style="gap:28px">
         <div class="with-aside">
           <div class="stack" style="gap:20px">
-            <div><h1 style="font-size:var(--fs-h1)">Airport add-ons</h1><p class="muted">Available at Lagos (LOS), Terminal 2 on Fri, 18 Dec 2026.</p></div>
+            <div><h1 style="font-size:var(--fs-h1)">Airport add-ons</h1><p class="muted">Available at ${esc(OB.state.ex.airport)} on ${esc(OB.state.ex.date)}.</p></div>
             ${OB.airportAddons.map((a) => {
               const on = OB.state.addons.has(a.id);
               return `

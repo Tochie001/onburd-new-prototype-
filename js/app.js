@@ -10,6 +10,7 @@ window.OB = window.OB || {};
     favs: new Set(['isimi-lagos']),
     ff: { sort: 'cheapest', stops: 'any', hiddenAirlines: new Set(), refundable: false, maxPrice: 1400000 },
     listQ: { events: '', experiences: '' },
+    ex: { airport: 'Lagos (LOS), Terminal 2', date: 'Fri, 18 Dec 2026', pax: '1 traveller' }, exOpen: false,
     fs: { mChain: '', mBranch: '', mDate: '2026-10-16', qText: '', qKind: null, from: 'Lagos (LOS)', to: 'Dubai (DXB)', apKey: null, apQuery: '', recent: ['LHR', 'ACC'], trip: 'round', cabin: 'Economy', dep: '2026-12-18', ret: '2027-01-03', adults: 1, children: 0, infants: 0, pop: null, picking: 'dep', calMonth: '2026-12', mIdx: 0,
       legs: [{ from: 'Lagos (LOS)', to: 'Dubai (DXB)', date: '2026-12-18' }, { from: 'Dubai (DXB)', to: 'London (LHR)', date: '2026-12-27' }] },
     openFlight: null,
@@ -186,6 +187,7 @@ window.OB = window.OB || {};
     'filter-refundable': (el) => { S.ff.refundable = el.checked; render(); },
     'more-flights': (el) => { S.openMore = S.openMore === el.dataset.id ? null : el.dataset.id; render(); },
     'scroll-to': (el) => document.getElementById(el.dataset.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    'toggle-ex-search': () => { S.exOpen = !S.exOpen; render(); },
     'toggle-search': () => { S.searchOpen = !S.searchOpen; render(); },
     'toggle-filters': () => { S.filtersOpen = !S.filtersOpen; render(); },
     'fs-pop': (el) => {
@@ -329,6 +331,8 @@ window.OB = window.OB || {};
   });
 
   document.addEventListener('change', (ev) => {
+    const exMap = { 'a-airport': 'airport', 'a-date': 'date', 'a-pax': 'pax' };
+    if (exMap[ev.target.id]) S.ex[exMap[ev.target.id]] = ev.target.value;
     const mc = ev.target.id && ev.target.id.match(/^mc-(from|to)-(\d+)$/);
     if (mc) { S.fs.legs[+mc[2]][mc[1]] = ev.target.value; return; }
     const el = ev.target.closest('[data-action]');
@@ -389,6 +393,7 @@ window.OB = window.OB || {};
   const forms = {
     search: (form, ev) => {
       const target = ev.submitter?.dataset.go || form.querySelector('[data-go]')?.dataset.go || 'flights';
+      if (target === 'extras') { form.querySelectorAll('#a-airport, #a-date, #a-pax').forEach((i) => { S.ex[{ 'a-airport': 'airport', 'a-date': 'date', 'a-pax': 'pax' }[i.id]] = i.value; }); S.exOpen = false; if (location.hash === '#extras') { render(); toast('Extras updated for ' + S.ex.airport); return; } }
       if (target !== 'flights') { go(target); return; }
       S.fs.pop = null; S.searchOpen = false; S.openMore = null;
       startFlightSearch();

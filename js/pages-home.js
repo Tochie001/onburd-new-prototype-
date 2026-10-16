@@ -332,9 +332,9 @@ window.OB = window.OB || {};
       case 'movies': return OB.cinemaSearch();
       case 'extras': return `
         <div class="search-fields">
-          ${sfield('a-airport', 'pin', 'Departure airport', 'Lagos (LOS), Terminal 2', { wide: true, options: ['Lagos (LOS), Terminal 2', 'Lagos (LOS), MMA2 domestic', 'Abuja (ABV)', 'Port Harcourt (PHC)'] })}
-          ${sfield('a-date', 'calendar', 'Travel date', 'Fri, 18 Dec 2026')}
-          ${sfield('a-pax', 'user', 'Travellers', '1 traveller', { options: ['1 traveller', '2 travellers', '3 travellers', '4 travellers'] })}
+          ${sfield('a-airport', 'pin', 'Departure airport', OB.state.ex.airport, { wide: true, options: ['Lagos (LOS), Terminal 2', 'Lagos (LOS), MMA2 domestic', 'Abuja (ABV)', 'Port Harcourt (PHC)'] })}
+          ${sfield('a-date', 'calendar', 'Travel date', OB.state.ex.date)}
+          ${sfield('a-pax', 'user', 'Travellers', OB.state.ex.pax, { options: ['1 traveller', '2 travellers', '3 travellers', '4 travellers'] })}
           ${go('extras', 'See extras')}
         </div>`;
       default: {
