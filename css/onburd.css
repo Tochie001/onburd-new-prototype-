@@ -465,6 +465,8 @@ button.sfield:hover { border-color: var(--ink-2); }
 @media (max-width: 860px) {
   .c-fields { flex-direction: column; }
   .c-fields .c-anchor { flex: none; width: 100%; }
+  .c-fields .search-go { flex: none; width: 100%; height: 50px; display: flex; gap: 8px; align-items: center; justify-content: center; font-weight: 700; }
+  .c-fields .search-go .search-go-label { display: inline; }
   .c-pop, .c-date-pop { left: 0; right: 0; width: auto; }
 }
 .c-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
