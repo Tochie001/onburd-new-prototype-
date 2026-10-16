@@ -313,7 +313,7 @@ window.OB = window.OB || {};
   OB.TABS = [
     { id: 'flights', label: 'Flights', icon: 'plane', hero: 'hero-balloons', pos: '50% 12%' },
     { id: 'hotels', label: 'Hotels', icon: 'bed', hero: 'dest-maldives', hidden: true },
-    { id: 'events', label: 'Events', icon: 'ticket', hero: 'cat-music' },
+    { id: 'events', label: 'Events', icon: 'ticket', hero: 'hero-events', pos: '50% 68%' },
     { id: 'experiences', label: 'Experiences', icon: 'compass', hero: 'hero-experiences', pos: '50% 40%' },
     { id: 'movies', label: 'Movies', icon: 'film', hero: 'hero-movies' },
     { id: 'extras', label: 'Travel extras', icon: 'luggage', hero: 'hero-extras', pos: '50% 45%' }
