@@ -1362,3 +1362,27 @@ button.fm-cell:hover { color: var(--blue-700); background: var(--blue-50); }
   *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
   *:not(.fll-bar span) { animation: none !important; }
 }
+
+/* Compact phone hero: whole search fits above the fold */
+@media (max-width: 560px) {
+  .hero .hero-inner { padding-block: 14px 18px; gap: 12px; }
+  .hero h1 { font-size: 1.6rem; line-height: 1.15; max-width: 16ch; margin-inline: auto; }
+  .hero .lede { font-size: var(--fs-xs); margin-top: 6px; }
+  .hero .hero-tab { height: 34px; padding: 0 12px; font-size: var(--fs-xs); }
+  .hero .search-card { padding: 12px; gap: 10px; }
+  .hero .search-options { gap: 6px; }
+  .hero .pill-btn { height: 32px; }
+  .hero .search-fields { gap: 8px; }
+  .hero .sfield, .hero .sf-half { padding-block: 6px; }
+  .hero .sfield-icon { width: 30px; height: 30px; }
+  .hero .sfield-icon .icon { width: 16px; height: 16px; }
+  .hero .sf-label, .hero .sfield-body label { font-size: 11px; }
+  .hero .search-fields:has(.sf-pax-wrap) { flex-wrap: wrap; }
+  .hero .search-fields:has(.sf-pax-wrap) > .sf-pax-wrap { flex: 1 1 0; min-width: 0; }
+  .hero .search-fields:has(.sf-pax-wrap) > .search-go { flex: 0 0 56px; width: 56px; height: auto; }
+  .hero .search-fields:has(.sf-pax-wrap) > .search-go .search-go-label { display: none; }
+  .hero .swap-btn { width: 28px; height: 28px; }
+}
+@media (max-width: 560px) and (max-height: 600px) {
+  .hero .lede { display: none; }
+}
