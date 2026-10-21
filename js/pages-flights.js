@@ -485,7 +485,7 @@ window.OB = window.OB || {};
             <button class="btn btn-primary btn-lg btn-block" type="submit">Pay ${fmt(amount)}</button>
           </form>
         </div>
-        <div class="secured">${icon('lock')} Secured by <strong>paystack</strong></div>
+        <div class="secured">${icon('lock')} Secured by ${OB.paystackLogo()}</div>
       </div>
     </div>`;
 

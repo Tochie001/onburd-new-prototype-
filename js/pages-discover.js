@@ -184,32 +184,22 @@ window.OB = window.OB || {};
               </div>
             </section>
             <section class="panel" aria-labelledby="xc-pay">
-              <div class="panel-head"><div><h2 id="xc-pay">Payment</h2><p>Choose how you'd like to pay.</p></div></div>
-              <div class="stack" style="gap:10px">
-                <label class="radio-card"><input type="radio" name="xc-method" value="card" data-action="x-pay" ${m === 'card' ? 'checked' : ''}>${icon('card')}<span><strong>Card</strong><span class="muted text-xs" style="display:block">Visa, Mastercard, Verve</span></span></label>
-                ${m === 'card' ? `<div class="form-grid xc-sub">
-                  <div class="field-group col-12"><label for="xc-cc-num">Card number</label><input class="input num" id="xc-cc-num" inputmode="numeric" placeholder="0000 0000 0000 0000" autocomplete="cc-number" value="${esc(xc['cc-num'] || '')}"></div>
-                  <div class="field-group col-6"><label for="xc-cc-exp">Expiry</label><input class="input num" id="xc-cc-exp" placeholder="MM / YY" autocomplete="cc-exp" value="${esc(xc['cc-exp'] || '')}"></div>
-                  <div class="field-group col-6"><label for="xc-cc-cvv">CVV</label><input class="input num" id="xc-cc-cvv" inputmode="numeric" placeholder="123" autocomplete="cc-csc" value="${esc(xc['cc-cvv'] || '')}"></div>
-                  <p class="col-12 text-xs muted row" style="gap:6px">${icon('lock')} Secured by Paystack. Onburd never stores your card number.</p>
-                </div>` : ''}
-                <label class="radio-card"><input type="radio" name="xc-method" value="bank" data-action="x-pay" ${m === 'bank' ? 'checked' : ''}>${icon('bank')}<span><strong>Bank transfer</strong><span class="muted text-xs" style="display:block">Confirms in about 2 minutes</span></span></label>
-                ${m === 'bank' ? `<div class="bank-box xc-sub">
-                  <dl><dt>Bank</dt><dd>Wema Bank</dd><dt>Account name</dt><dd>Onburd Checkout</dd>
-                  <dt>Account number</dt><dd>${OB.state.xBankShown ? `8123 456 790 <button class="link-btn text-xs" type="button" data-action="copy" data-text="8123456790">${icon('copy')} Copy</button>` : '<span class="masked">•••• ••• •••</span>'}</dd>
-                  <dt>Amount</dt><dd>${fmt(total)}</dd></dl>
-                  ${OB.state.xBankShown ? `<p class="text-xs muted">${icon('clock')} This account expires in 30 minutes.</p>` : `<button class="btn btn-secondary btn-sm" type="button" data-action="x-bank-show">Show account details</button>`}
-                </div>` : ''}
+              <div class="panel-head"><div><h2 id="xc-pay">Payment</h2><p>You'll confirm the payment in a secure Paystack window.</p></div></div>
+              <div class="pay-one" role="radiogroup" aria-label="Payment method">
+                <label class="radio-card is-single"><input type="radio" name="xc-method" value="paystack" checked>
+                  <span class="pay-one-text"><strong>Pay with card or bank</strong><small>Cards, bank transfer and USSD, processed securely by Paystack</small></span>
+                  ${OB.paystackLogo()}
+                </label>
               </div>
             </section>
             <div class="stack" style="gap:12px">
               <label class="check"><input type="checkbox" id="xc-terms" required ${xc.terms ? 'checked' : ''}><span>I agree to Onburd's <a href="#home">booking terms</a> and ${esc(x.by)}'s cancellation policy.</span></label>
               <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details and accept the booking terms.</p>
             </div>
-            <div><button class="btn btn-primary btn-lg" type="submit">${m === 'bank' ? "I've sent the money" : `Pay ${fmt(total)}`}</button></div>
+            <div><button class="btn btn-primary btn-lg" type="submit">Pay ${fmt(total)}</button></div>
           </div>
           <div class="aside-sticky">${OB.orderSummary(order)}
-            <div class="assure"><span>${icon('check')} Free cancellation up to 14 days before</span><span>${icon('shield')} Secure checkout</span></div>
+            <div class="assure"><span>${icon('check')} Best price guaranteed</span></div>
           </div>
         </form>
       </main>
@@ -230,7 +220,7 @@ window.OB = window.OB || {};
             <div class="detail-head">
               <h1>${esc(x.title)}</h1>
               <div class="detail-meta">
-                <span><svg class="icon star" viewBox="0 0 24 24">${OB.ICONS.star}</svg><strong>${x.rating.toFixed(1)}</strong> <a href="#reviews">${x.reviews} reviews</a></span>
+                <span><svg class="icon star" viewBox="0 0 24 24">${OB.ICONS.star}</svg><strong>${x.rating.toFixed(1)}</strong></span>
                 <span>${icon('pin')} ${esc(x.place)}</span>
                 <span>${icon('user')} Operated by ${esc(x.by)}</span>
               </div>
@@ -253,24 +243,18 @@ window.OB = window.OB || {};
               <details class="acc"><summary>Location ${icon('chevronDown')}</summary><div class="acc-body"><p>${icon('pin')} Starts in ${esc(x.place)}. Pickup from your hotel or the airport.</p>${OB.mapArt(x.place)}</div></details>
               <details class="acc"><summary>Availability &amp; how it works ${icon('chevronDown')}</summary><div class="acc-body"><p>Departs every Saturday from November 2026 to April 2027. Book at least 3 weeks ahead so we can arrange your visa support letter. After payment you get a voucher by email and your operator calls within 24 hours to confirm pickup.</p></div></details>
             </div>
-            <section class="stack" id="reviews" aria-labelledby="rev-h" style="gap:14px">
-              <div class="row-between"><h2 id="rev-h" style="font-size:var(--fs-h2)">Reviews</h2><span class="row text-sm"><svg class="icon star" viewBox="0 0 24 24">${OB.ICONS.star}</svg><strong>${x.rating.toFixed(1)}</strong><span class="muted">from ${x.reviews} travellers</span></span></div>
-              <div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">${OB.reviews.map((r) => `
-                <article class="review"><header><strong>“${esc(r.title)}”</strong><span class="row" style="gap:1px;color:var(--warning)">${Array.from({ length: r.rating }, () => `<svg class="icon star" viewBox="0 0 24 24" style="width:14px;height:14px">${OB.ICONS.star}</svg>`).join('')}</span></header>
-                <p>${esc(r.body)}</p><span class="text-xs muted">${esc(r.name)} · ${r.date}</span></article>`).join('')}</div>
-            </section>
           </div>
           <div class="aside-sticky">
             <div class="book-card">
               <span class="price-from">From</span>
-              <div><span class="price">${fmt(x.price)}</span> <span class="muted text-sm">per ${x.unit}${isEgypt ? ', sharing' : ''}</span></div>
+              <div><span class="price">${fmt(x.price)}</span></div>
               <div class="row-between"><span class="label">Adults</span><div class="qty" role="group" aria-label="Adults">
                 <button type="button" data-action="exp-guests" data-d="-1" ${OB.state.expGuests <= 1 ? 'disabled' : ''} aria-label="Remove adult">${icon('minus')}</button><output>${OB.state.expGuests}</output>
                 <button type="button" data-action="exp-guests" data-d="1" ${OB.state.expGuests >= 8 ? 'disabled' : ''} aria-label="Add adult">${icon('plus')}</button></div></div>
               <hr class="divider">
               <div class="summary-total" style="border:0;padding:0"><span>Total</span><strong>${fmt(OB.orderTotal(order))}</strong></div>
               <a class="btn btn-primary btn-lg btn-block" href="#exp-checkout~${x.id}">Continue booking</a>
-              <div class="assure"><span>${icon('check')} Free cancellation up to 14 days before</span><span>${icon('check')} Best price guaranteed</span></div>
+              <div class="assure"><span>${icon('check')} Best price guaranteed</span></div>
             </div>
           </div>
         </div>

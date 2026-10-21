@@ -369,5 +369,6 @@ window.OB = window.OB || {};
       <div class="m-cta-text">${label ? `<small>${label}</small>` : ''}${amount ? `<strong>${amount}</strong>` : ''}</div>
       ${button}
     </div>`;
+  OB.paystackLogo = () => `<span class="paystack-logo" aria-label="Paystack"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="2" width="18" height="3" rx="1.5" fill="#00C3F7"/><rect x="1" y="7" width="18" height="3" rx="1.5" fill="#011B33"/><rect x="1" y="12" width="18" height="3" rx="1.5" fill="#00C3F7"/><rect x="1" y="17" width="11" height="3" rx="1.5" fill="#011B33"/></svg><b>paystack</b></span>`;
   OB.orderTotal = (order) => order.lines.reduce((a, [, v]) => a + v, 0);
 })();

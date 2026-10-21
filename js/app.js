@@ -409,10 +409,8 @@ window.OB = window.OB || {};
       const ok = need.every((i) => i.value.trim()) && $('#xc-terms').checked;
       $('#xc-error').hidden = ok;
       if (!ok) { (need.find((i) => !i.value.trim()) || $('#xc-terms')).focus(); return; }
-      const x = OB.find(OB.experiences, form.dataset.id);
-      S.order = OB.expOrder(x); S.payMethod = S.xPay;
-      toast(S.xPay === 'bank' ? 'Payment received' : `Payment of ${fmt(OB.orderTotal(S.order))} successful`);
-      go('confirmed');
+      S.order = OB.expOrder(OB.find(OB.experiences, form.dataset.id)); S.payMethod = 'card';
+      openOverlay(OB.paystackModal(OB.orderTotal(S.order)));
     },
     'list-search': (form) => { form.querySelector('input')?.blur(); },
     newsletter: (form) => { toast('Subscribed. Your first deals email arrives Thursday.'); form.reset(); },
