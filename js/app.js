@@ -10,6 +10,7 @@ window.OB = window.OB || {};
     favs: new Set(['isimi-lagos']),
     ff: { sort: 'cheapest', stops: 'any', hiddenAirlines: new Set(), refundable: false, maxPrice: 1400000 },
     listQ: { events: '', experiences: '' },
+    xPay: 'card', xBankShown: false, xc: {},
     ex: { airport: 'Lagos (LOS), Terminal 2', date: 'Fri, 18 Dec 2026', pax: '1 traveller' }, exOpen: false,
     fs: { mChain: '', mBranch: '', mDate: '2026-10-16', qText: '', qKind: null, from: 'Lagos (LOS)', to: 'Dubai (DXB)', apKey: null, apQuery: '', recent: ['LHR', 'ACC'], trip: 'round', cabin: 'Economy', dep: '2026-12-18', ret: '2027-01-03', adults: 1, children: 0, infants: 0, pop: null, picking: 'dep', calMonth: '2026-12', mIdx: 0,
       legs: [{ from: 'Lagos (LOS)', to: 'Dubai (DXB)', date: '2026-12-18' }, { from: 'Dubai (DXB)', to: 'London (LHR)', date: '2026-12-27' }] },
@@ -187,6 +188,7 @@ window.OB = window.OB || {};
     'filter-refundable': (el) => { S.ff.refundable = el.checked; render(); },
     'more-flights': (el) => { S.openMore = S.openMore === el.dataset.id ? null : el.dataset.id; render(); },
     'scroll-to': (el) => document.getElementById(el.dataset.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    'x-bank-show': () => { S.xBankShown = true; render(); },
     'toggle-ex-search': () => { S.exOpen = !S.exOpen; render(); },
     'toggle-search': () => { S.searchOpen = !S.searchOpen; render(); },
     'toggle-filters': () => { S.filtersOpen = !S.filtersOpen; render(); },
@@ -324,13 +326,14 @@ window.OB = window.OB || {};
     const el = ev.target.closest('[data-action]');
     if (!el) return;
     const name = el.dataset.action;
-    if (['filter-stops', 'filter-airline', 'filter-price', 'filter-refundable', 'price-watch', 'pss-plan', 'exp-date', 'bk-search', 'pw', 'fs-trip', 'fs-cabin', 'm-chain', 'm-branch', 'm-date'].includes(name)) return;
+    if (['filter-stops', 'filter-airline', 'filter-price', 'filter-refundable', 'price-watch', 'pss-plan', 'exp-date', 'bk-search', 'pw', 'fs-trip', 'fs-cabin', 'm-chain', 'm-branch', 'm-date', 'x-pay'].includes(name)) return;
     if (name === 'close-overlay' && ev.target.closest('[data-stop]') && !ev.target.closest('button[data-action="close-overlay"]')) return;
     if (el.tagName !== 'A' || name === 'toast') ev.preventDefault();
     actions[name]?.(el, ev);
   });
 
   document.addEventListener('change', (ev) => {
+    if (ev.target.id === 'xc-terms') S.xc.terms = ev.target.checked;
     const exMap = { 'a-airport': 'airport', 'a-date': 'date', 'a-pax': 'pax' };
     if (exMap[ev.target.id]) S.ex[exMap[ev.target.id]] = ev.target.value;
     const mc = ev.target.id && ev.target.id.match(/^mc-(from|to)-(\d+)$/);
@@ -341,6 +344,7 @@ window.OB = window.OB || {};
     if (['filter-stops', 'filter-airline', 'filter-refundable', 'price-watch', 'pss-plan', 'exp-date'].includes(name)) actions[name](el, ev);
     if (name === 'fs-trip') { S.fs.trip = el.value; if (el.value === 'round' && !S.fs.ret) { S.fs.pop = 'dates'; S.fs.picking = 'ret'; S.fs.calMonth = S.fs.dep.slice(0, 7); } render(); }
     if (name === 'fs-cabin') S.fs.cabin = el.value;
+    if (name === 'x-pay') { S.xPay = el.value; render(); }
     if (name === 'm-chain') { S.fs.mChain = el.value; S.fs.mBranch = ''; render(); document.getElementById('m-branch')?.focus(); }
     if (name === 'm-branch') S.fs.mBranch = el.value;
     if (name === 'm-date') S.fs.mDate = el.value;
@@ -349,6 +353,7 @@ window.OB = window.OB || {};
   let bkTimer;
   document.addEventListener('input', (ev) => {
     const el = ev.target;
+    if (el.id && el.id.startsWith('xc-') && el.type !== 'checkbox') S.xc[el.id.slice(3)] = el.value;
     if (el.dataset.action === 'filter-price') actions['filter-price'](el);
     if (el.dataset.action === 'c-q') { S.fs.cQuery = el.value; render(); }
     if (el.dataset.action === 'list-q') { S.listQ[el.dataset.kind] = el.value; render(); }
@@ -397,6 +402,17 @@ window.OB = window.OB || {};
       if (target !== 'flights') { go(target); return; }
       S.fs.pop = null; S.searchOpen = false; S.openMore = null;
       startFlightSearch();
+    },
+    'exp-checkout': (form) => {
+      const need = ['xc-first', 'xc-last', 'xc-email', 'xc-phone'].map((id) => document.getElementById(id));
+      need.forEach((i) => i.classList.toggle('is-invalid', !i.value.trim()));
+      const ok = need.every((i) => i.value.trim()) && $('#xc-terms').checked;
+      $('#xc-error').hidden = ok;
+      if (!ok) { (need.find((i) => !i.value.trim()) || $('#xc-terms')).focus(); return; }
+      const x = OB.find(OB.experiences, form.dataset.id);
+      S.order = OB.expOrder(x); S.payMethod = S.xPay;
+      toast(S.xPay === 'bank' ? 'Payment received' : `Payment of ${fmt(OB.orderTotal(S.order))} successful`);
+      go('confirmed');
     },
     'list-search': (form) => { form.querySelector('input')?.blur(); },
     newsletter: (form) => { toast('Subscribed. Your first deals email arrives Thursday.'); form.reset(); },

@@ -150,11 +150,70 @@ window.OB = window.OB || {};
   OB.expOrder = (x) => {
     const n = OB.state.expGuests;
     return {
-      kind: 'experience', summaryTitle: 'Your trip', steps: ['Date & guests', 'Payment'], payStep: 1, back: `experience~${x.id}`, ref: 'OB-46102',
-      item: { img: x.img, title: x.title, sub: `${OB.state.expDate} · ${n} ${n === 1 ? 'adult' : 'adults'}` },
-      lines: [[`${fmt(x.price)} × ${n} ${n === 1 ? 'adult' : 'adults'}`, x.price * n], ['Service fee', 0]],
+      kind: 'experience', summaryTitle: 'Your trip', steps: ['Experience', 'Contact & payment'], payStep: 1, back: `experience~${x.id}`, ref: 'OB-46102',
+      item: { img: x.img, title: x.title, sub: `${x.place} · ${n} ${n === 1 ? 'adult' : 'adults'}` },
+      lines: [[`${fmt(x.price)} × ${n} ${n === 1 ? 'adult' : 'adults'}`, x.price * n]],
       confirmTitle: 'Your experience is booked', confirmBody: `${x.by} will contact you within 24 hours with pickup details. Your voucher is in My bookings.`
     };
+  };
+
+  OB.pages['exp-checkout'] = (id) => {
+    const x = OB.find(OB.experiences, id);
+    const order = OB.expOrder(x);
+    const total = OB.orderTotal(order);
+    const u = OB.state.loggedIn ? OB.state.user : null;
+    const xc = OB.state.xc;
+    const v = (k, val) => esc(xc[k] ?? (u ? val : ''));
+    const m = OB.state.xPay;
+    return `
+      ${OB.nav()}
+      <main class="container" style="padding-block:0 72px">
+        ${OB.stepper(order.steps, 1)}
+        <form class="with-aside" style="margin-top:28px" data-form="exp-checkout" data-id="${x.id}" novalidate>
+          <div class="stack" style="gap:24px">
+            ${OB.backTitle('Contact & payment', `experience~${x.id}`)}
+            <section class="panel" aria-labelledby="xc-contact">
+              <div class="panel-head"><div><h2 id="xc-contact">Contact information</h2><p>We send your voucher here, and ${esc(x.by)} uses it to arrange pickup.</p></div></div>
+              <div class="form-grid">
+                <div class="field-group col-6"><label for="xc-first">First name</label><input class="input" id="xc-first" value="${v('first', u?.first)}" required autocomplete="given-name"></div>
+                <div class="field-group col-6"><label for="xc-last">Surname</label><input class="input" id="xc-last" value="${v('last', u?.last)}" required autocomplete="family-name"></div>
+                <div class="field-group col-6"><label for="xc-email">Email address</label><input class="input" id="xc-email" type="email" value="${v('email', u?.email)}" placeholder="you@example.com" required autocomplete="email"></div>
+                <div class="field-group col-6"><label for="xc-phone">Phone number</label>
+                  <div class="phone-input"><select class="select" id="xc-cc" aria-label="Country code"><option>🇳🇬 +234</option><option>🇬🇭 +233</option><option>🇰🇪 +254</option></select><input class="input" id="xc-phone" type="tel" value="${v('phone', '803 456 7890')}" placeholder="803 456 7890" required autocomplete="tel-national"></div></div>
+                <div class="field-group col-12"><label for="xc-note">Note for the operator <span class="muted">(optional)</span></label><textarea class="textarea" id="xc-note" placeholder="Dietary needs, pickup hotel, accessibility…">${esc(xc.note || '')}</textarea></div>
+              </div>
+            </section>
+            <section class="panel" aria-labelledby="xc-pay">
+              <div class="panel-head"><div><h2 id="xc-pay">Payment</h2><p>Choose how you'd like to pay.</p></div></div>
+              <div class="stack" style="gap:10px">
+                <label class="radio-card"><input type="radio" name="xc-method" value="card" data-action="x-pay" ${m === 'card' ? 'checked' : ''}>${icon('card')}<span><strong>Card</strong><span class="muted text-xs" style="display:block">Visa, Mastercard, Verve</span></span></label>
+                ${m === 'card' ? `<div class="form-grid xc-sub">
+                  <div class="field-group col-12"><label for="xc-cc-num">Card number</label><input class="input num" id="xc-cc-num" inputmode="numeric" placeholder="0000 0000 0000 0000" autocomplete="cc-number" value="${esc(xc['cc-num'] || '')}"></div>
+                  <div class="field-group col-6"><label for="xc-cc-exp">Expiry</label><input class="input num" id="xc-cc-exp" placeholder="MM / YY" autocomplete="cc-exp" value="${esc(xc['cc-exp'] || '')}"></div>
+                  <div class="field-group col-6"><label for="xc-cc-cvv">CVV</label><input class="input num" id="xc-cc-cvv" inputmode="numeric" placeholder="123" autocomplete="cc-csc" value="${esc(xc['cc-cvv'] || '')}"></div>
+                  <p class="col-12 text-xs muted row" style="gap:6px">${icon('lock')} Secured by Paystack. Onburd never stores your card number.</p>
+                </div>` : ''}
+                <label class="radio-card"><input type="radio" name="xc-method" value="bank" data-action="x-pay" ${m === 'bank' ? 'checked' : ''}>${icon('bank')}<span><strong>Bank transfer</strong><span class="muted text-xs" style="display:block">Confirms in about 2 minutes</span></span></label>
+                ${m === 'bank' ? `<div class="bank-box xc-sub">
+                  <dl><dt>Bank</dt><dd>Wema Bank</dd><dt>Account name</dt><dd>Onburd Checkout</dd>
+                  <dt>Account number</dt><dd>${OB.state.xBankShown ? `8123 456 790 <button class="link-btn text-xs" type="button" data-action="copy" data-text="8123456790">${icon('copy')} Copy</button>` : '<span class="masked">•••• ••• •••</span>'}</dd>
+                  <dt>Amount</dt><dd>${fmt(total)}</dd></dl>
+                  ${OB.state.xBankShown ? `<p class="text-xs muted">${icon('clock')} This account expires in 30 minutes.</p>` : `<button class="btn btn-secondary btn-sm" type="button" data-action="x-bank-show">Show account details</button>`}
+                </div>` : ''}
+              </div>
+            </section>
+            <div class="stack" style="gap:12px">
+              <label class="check"><input type="checkbox" id="xc-terms" required ${xc.terms ? 'checked' : ''}><span>I agree to Onburd's <a href="#home">booking terms</a> and ${esc(x.by)}'s cancellation policy.</span></label>
+              <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details and accept the booking terms.</p>
+            </div>
+            <div><button class="btn btn-primary btn-lg" type="submit">${m === 'bank' ? "I've sent the money" : `Pay ${fmt(total)}`}</button></div>
+          </div>
+          <div class="aside-sticky">${OB.orderSummary(order)}
+            <div class="assure"><span>${icon('check')} Free cancellation up to 14 days before</span><span>${icon('shield')} Secure checkout</span></div>
+          </div>
+        </form>
+      </main>
+      ${OB.footer()}`;
   };
 
   OB.pages.experience = (id) => {
@@ -203,27 +262,21 @@ window.OB = window.OB || {};
           </div>
           <div class="aside-sticky">
             <div class="book-card">
-              <div class="row-between"><span class="price-from">From</span><span class="badge badge-pss">Pay Small Small</span></div>
+              <span class="price-from">From</span>
               <div><span class="price">${fmt(x.price)}</span> <span class="muted text-sm">per ${x.unit}${isEgypt ? ', sharing' : ''}</span></div>
-              <div class="field-group"><label for="x-date-pick">Date</label><select class="select" id="x-date-pick" data-action="exp-date">${['Sat, 7 Nov 2026', 'Sat, 21 Nov 2026', 'Sat, 5 Dec 2026', 'Sat, 19 Dec 2026'].map((d) => `<option ${d === OB.state.expDate ? 'selected' : ''}>${d}</option>`).join('')}</select></div>
               <div class="row-between"><span class="label">Adults</span><div class="qty" role="group" aria-label="Adults">
                 <button type="button" data-action="exp-guests" data-d="-1" ${OB.state.expGuests <= 1 ? 'disabled' : ''} aria-label="Remove adult">${icon('minus')}</button><output>${OB.state.expGuests}</output>
                 <button type="button" data-action="exp-guests" data-d="1" ${OB.state.expGuests >= 8 ? 'disabled' : ''} aria-label="Add adult">${icon('plus')}</button></div></div>
               <hr class="divider">
               <div class="summary-total" style="border:0;padding:0"><span>Total</span><strong>${fmt(OB.orderTotal(order))}</strong></div>
-              <a class="btn btn-primary btn-lg btn-block" href="#pay~experience">Continue booking</a>
+              <a class="btn btn-primary btn-lg btn-block" href="#exp-checkout~${x.id}">Continue booking</a>
               <div class="assure"><span>${icon('check')} Free cancellation up to 14 days before</span><span>${icon('check')} Best price guaranteed</span></div>
-            </div>
-            <div class="quote-card">
-              <h3>Want it your way?</h3>
-              <ul><li>Choose your own dates and length</li><li>Upgrade hotels or cruise cabins</li><li>Add or skip stops</li></ul>
-              <button class="btn btn-secondary" type="button" data-action="toast" data-msg="Quote request sent. Nice Tours replies within 24 hours.">Request a custom quote</button>
             </div>
           </div>
         </div>
         <section class="section">${OB.sectionHead('You may also like', { href: 'experiences', rail: 'rail-like' })}${OB.rail('rail-like', OB.experiences.filter((y) => y.id !== x.id).slice(-6).map(OB.expCard))}</section>
       </main>
-      ${OB.mobileCta({ label: `${OB.state.expDate.replace(/ \d{4}$/, '')} · ${OB.state.expGuests} adult${OB.state.expGuests > 1 ? 's' : ''}`, amount: OB.fmt(OB.orderTotal(order)), button: '<a class="btn btn-primary" href="#pay~experience">Continue</a>' })}
+      ${OB.mobileCta({ label: `${OB.state.expGuests} adult${OB.state.expGuests > 1 ? 's' : ''}`, amount: OB.fmt(OB.orderTotal(order)), button: `<a class="btn btn-primary" href="#exp-checkout~${x.id}">Continue</a>` })}
       ${OB.footer()}`;
   };
 

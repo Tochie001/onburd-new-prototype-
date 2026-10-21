@@ -468,6 +468,10 @@ button.sfield:hover { border-color: var(--ink-2); }
 .c-cal-head .icon-btn { width: 32px; height: 32px; }
 .c-cal-pop .cal-day.is-start::before { inset: 0 2px; }
 .sk-poster { aspect-ratio: 2 / 3; border-radius: var(--r-md); }
+.radio-card > .icon { color: var(--blue); width: 22px; height: 22px; }
+.radio-card strong { font-size: var(--fs-sm); }
+.xc-sub { margin: 0 0 6px 30px; }
+@media (max-width: 560px) { .xc-sub { margin-left: 0; } }
 .c-cal-note { font-size: var(--fs-2xs); color: var(--muted); text-align: center; margin-top: 8px; }
 @media (max-width: 860px) {
   .c-fields { flex-direction: column; }

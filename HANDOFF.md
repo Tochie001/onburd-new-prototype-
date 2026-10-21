@@ -24,6 +24,7 @@ Only build screens marked **Ready for dev**. Screens marked **In design** will s
 | Checkout | Payment (Pay Small Small, card, transfer), confirmation | `#pay~flight`, `#confirmed` | In design |
 | Events | Listing, detail, tickets | `#events`, `#event~…` | In design |
 | Experiences | Listing, detail | `#experiences`, `#experience~…` | In design |
+| Experiences | Contact & payment (single checkout page) | `#exp-checkout~…` | In design |
 | Movies | Now showing, showtimes and seats | `#movies`, `#movie~…` | In design |
 | Travel extras | Airport add-ons | `#extras` | In design |
 | Hotels | Results | `#hotels` | Hidden for now |
