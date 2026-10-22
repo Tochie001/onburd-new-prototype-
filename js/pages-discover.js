@@ -147,12 +147,18 @@ window.OB = window.OB || {};
       ${OB.footer()}`;
   };
 
+  OB.expPrices = (x) => ({ adult: x.adult ?? x.price, child: x.child ?? Math.round(x.price * 0.6 / 1000) * 1000 });
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  OB.expPax = () => { const { adults, children } = OB.state.expQty; return [adults ? plural(adults, 'adult', 'adults') : '', children ? plural(children, 'child', 'children') : ''].filter(Boolean).join(', ') || 'No tickets'; };
   OB.expOrder = (x) => {
-    const n = OB.state.expGuests;
+    const { adults, children } = OB.state.expQty; const pr = OB.expPrices(x);
+    const lines = [];
+    if (adults) lines.push([`Adult × ${adults}`, pr.adult * adults]);
+    if (children) lines.push([`Child × ${children}`, pr.child * children]);
     return {
-      kind: 'experience', summaryTitle: 'Your trip', steps: ['Experience', 'Contact & payment'], payStep: 1, back: `experience~${x.id}`, ref: 'OB-46102',
-      item: { img: x.img, title: x.title, sub: `${x.place} · ${n} ${n === 1 ? 'adult' : 'adults'}` },
-      lines: [[`${fmt(x.price)} × ${n} ${n === 1 ? 'adult' : 'adults'}`, x.price * n]],
+      kind: 'experience', summaryTitle: 'Your trip', steps: ['Experience', 'Checkout'], payStep: 1, back: `experience~${x.id}`, ref: 'OB-46102',
+      item: { img: x.img, title: x.title, sub: `${x.place} · ${OB.expPax()}` },
+      lines,
       confirmTitle: 'Your experience is booked', confirmBody: `${x.by} will contact you within 24 hours with pickup details. Your voucher is in My bookings.`
     };
   };
@@ -171,9 +177,9 @@ window.OB = window.OB || {};
         ${OB.stepper(order.steps, 1)}
         <form class="with-aside" style="margin-top:28px" data-form="exp-checkout" data-id="${x.id}" novalidate>
           <div class="stack" style="gap:24px">
-            ${OB.backTitle('Contact & payment', `experience~${x.id}`)}
+            ${OB.backTitle('Checkout', `experience~${x.id}`)}
             <section class="panel" aria-labelledby="xc-contact">
-              <div class="panel-head"><div><h2 id="xc-contact">Contact information</h2><p>We send your voucher here, and ${esc(x.by)} uses it to arrange pickup.</p></div></div>
+              <div class="panel-head"><div><h2 id="xc-contact">Contact information</h2><p>We will send your order confirmation here.</p></div></div>
               <div class="form-grid">
                 <div class="field-group col-6"><label for="xc-first">First name</label><input class="input" id="xc-first" value="${v('first', u?.first)}" required autocomplete="given-name"></div>
                 <div class="field-group col-6"><label for="xc-last">Surname</label><input class="input" id="xc-last" value="${v('last', u?.last)}" required autocomplete="family-name"></div>
@@ -193,8 +199,8 @@ window.OB = window.OB || {};
               </div>
             </section>
             <div class="stack" style="gap:12px">
-              <label class="check"><input type="checkbox" id="xc-terms" required ${xc.terms ? 'checked' : ''}><span>I agree to Onburd's <a href="#home">booking terms</a> and ${esc(x.by)}'s cancellation policy.</span></label>
-              <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details and accept the booking terms.</p>
+              <p class="text-sm muted">By proceeding, you agree to the <a href="#home">terms and conditions</a>.</p>
+              <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details.</p>
             </div>
             <div><button class="btn btn-primary btn-lg" type="submit">Pay ${fmt(total)}</button></div>
           </div>
@@ -246,21 +252,26 @@ window.OB = window.OB || {};
           </div>
           <div class="aside-sticky">
             <div class="book-card">
-              <span class="price-from">From</span>
-              <div><span class="price">${fmt(x.price)}</span></div>
-              <div class="row-between"><span class="label">Adults</span><div class="qty" role="group" aria-label="Adults">
-                <button type="button" data-action="exp-guests" data-d="-1" ${OB.state.expGuests <= 1 ? 'disabled' : ''} aria-label="Remove adult">${icon('minus')}</button><output>${OB.state.expGuests}</output>
-                <button type="button" data-action="exp-guests" data-d="1" ${OB.state.expGuests >= 8 ? 'disabled' : ''} aria-label="Add adult">${icon('plus')}</button></div></div>
+              <h3 class="bc-title" id="bc-tickets">Select tickets</h3>
+              ${[['adults', 'Adult', '12 years and over', OB.expPrices(x).adult], ['children', 'Child', '2 to 11 years', OB.expPrices(x).child]].map(([k, label, note, price]) => {
+                const q = OB.state.expQty[k];
+                return `<div class="bc-tier ${q ? 'is-selected' : ''}">
+                  <div><strong>${label}</strong><small>${note}</small><span class="bc-price">${fmt(price)}</span></div>
+                  <div class="qty" role="group" aria-label="${label} tickets">
+                    <button type="button" data-action="exp-qty" data-k="${k}" data-d="-1" ${q <= 0 ? 'disabled' : ''} aria-label="Remove ${label.toLowerCase()}">${icon('minus')}</button><output>${q}</output>
+                    <button type="button" data-action="exp-qty" data-k="${k}" data-d="1" ${q >= 10 ? 'disabled' : ''} aria-label="Add ${label.toLowerCase()}">${icon('plus')}</button></div>
+                </div>`;
+              }).join('')}
               <hr class="divider">
               <div class="summary-total" style="border:0;padding:0"><span>Total</span><strong>${fmt(OB.orderTotal(order))}</strong></div>
-              <a class="btn btn-primary btn-lg btn-block" href="#exp-checkout~${x.id}">Continue booking</a>
+              ${OB.orderTotal(order) ? `<a class="btn btn-primary btn-lg btn-block" href="#exp-checkout~${x.id}">Continue booking</a>` : '<button class="btn btn-primary btn-lg btn-block" type="button" disabled>Add a ticket to continue</button>'}
               <div class="assure"><span>${icon('check')} Best price guaranteed</span></div>
             </div>
           </div>
         </div>
         <section class="section">${OB.sectionHead('You may also like', { href: 'experiences', rail: 'rail-like' })}${OB.rail('rail-like', OB.experiences.filter((y) => y.id !== x.id).slice(-6).map(OB.expCard))}</section>
       </main>
-      ${OB.mobileCta({ label: `${OB.state.expGuests} adult${OB.state.expGuests > 1 ? 's' : ''}`, amount: OB.fmt(OB.orderTotal(order)), button: `<a class="btn btn-primary" href="#exp-checkout~${x.id}">Continue</a>` })}
+      ${OB.mobileCta(OB.orderTotal(order) ? { label: OB.expPax(), amount: OB.fmt(OB.orderTotal(order)), button: `<a class="btn btn-primary" href="#exp-checkout~${x.id}">Continue</a>` } : { label: 'Adults from', amount: OB.fmt(OB.expPrices(x).adult), button: '<button class="btn btn-primary" type="button" data-action="scroll-to" data-target="bc-tickets">Select tickets</button>' })}
       ${OB.footer()}`;
   };
 

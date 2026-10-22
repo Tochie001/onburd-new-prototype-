@@ -470,6 +470,13 @@ button.sfield:hover { border-color: var(--ink-2); }
 .sk-poster { aspect-ratio: 2 / 3; border-radius: var(--r-md); }
 .radio-card > .icon { color: var(--blue); width: 22px; height: 22px; }
 .radio-card strong { font-size: var(--fs-sm); }
+.bc-title { font-size: var(--fs-h4); }
+.bc-tier { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
+.bc-tier.is-selected { border-color: var(--blue); box-shadow: inset 0 0 0 1px var(--blue); }
+.bc-tier > div:first-child { display: grid; min-width: 0; }
+.bc-tier strong { font-size: var(--fs-sm); }
+.bc-tier small { font-size: var(--fs-2xs); color: var(--muted); }
+.bc-price { font-weight: 800; font-size: var(--fs-body); margin-top: 4px; font-variant-numeric: tabular-nums; }
 .pay-one .radio-card { align-items: center; gap: 14px; }
 .pay-one-text { display: grid; flex: 1; min-width: 0; }
 .pay-one-text strong { font-size: var(--fs-sm); }

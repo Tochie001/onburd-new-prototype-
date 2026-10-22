@@ -28,7 +28,7 @@ window.OB = window.OB || {};
     bankShown: false,
     order: null,
     eventId: null, tickets: {}, eventCat: 'All', expCat: 'All',
-    expGuests: 2, expDate: 'Sat, 21 Nov 2026',
+    expQty: { adults: 1, children: 0 }, expDate: 'Sat, 21 Nov 2026',
     movieId: null, seats: new Set(), show: { cinema: 'filmhouse-lekki', time: '18:00', date: 'Wed, 14 Oct' },
     bkTab: 'All', bkQuery: '',
     editing: '',
@@ -300,7 +300,7 @@ window.OB = window.OB || {};
     'exp-cat': (el) => { S.expCat = el.dataset.v; render(); toast('Category filters narrow the same grid.'); },
     tickets: (el) => { const id = el.dataset.id; S.tickets[id] = Math.max(0, Math.min(10, (S.tickets[id] || 0) + +el.dataset.d)); render(); },
     'exp-date': (el) => { S.expDate = el.value; render(); },
-    'exp-guests': (el) => { S.expGuests = Math.max(1, Math.min(8, S.expGuests + +el.dataset.d)); render(); },
+    'exp-qty': (el) => { const k = el.dataset.k; S.expQty[k] = Math.max(0, Math.min(10, S.expQty[k] + +el.dataset.d)); render(); },
     'show-date': (el) => { S.show.date = el.dataset.v; render(); },
     showtime: (el) => { S.show.cinema = el.dataset.c; S.show.time = el.dataset.t; S.seats = new Set(); render(); },
     seat: (el) => { const id = el.dataset.id; if (S.seats.has(id)) S.seats.delete(id); else if (S.seats.size < 8) S.seats.add(id); else toast('You can choose up to 8 seats.'); render(); },
@@ -406,9 +406,9 @@ window.OB = window.OB || {};
     'exp-checkout': (form) => {
       const need = ['xc-first', 'xc-last', 'xc-email', 'xc-phone'].map((id) => document.getElementById(id));
       need.forEach((i) => i.classList.toggle('is-invalid', !i.value.trim()));
-      const ok = need.every((i) => i.value.trim()) && $('#xc-terms').checked;
+      const ok = need.every((i) => i.value.trim());
       $('#xc-error').hidden = ok;
-      if (!ok) { (need.find((i) => !i.value.trim()) || $('#xc-terms')).focus(); return; }
+      if (!ok) { need.find((i) => !i.value.trim()).focus(); return; }
       S.order = OB.expOrder(OB.find(OB.experiences, form.dataset.id)); S.payMethod = 'card';
       openOverlay(OB.paystackModal(OB.orderTotal(S.order)));
     },
