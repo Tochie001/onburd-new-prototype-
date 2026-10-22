@@ -103,7 +103,6 @@ window.OB = window.OB || {};
     const slot = document.querySelector('.hero-video');
     if (oldVideo && slot && oldVideo.dataset.src === slot.dataset.src) { slot.replaceWith(oldVideo); oldVideo.play().catch(() => {}); }
     if (changed) { closeOverlay(); window.scrollTo(0, 0); lastHash = hash; } else window.scrollTo(0, y);
-    if (changed && rn === 'confirmed') setTimeout(() => OB.confetti(), 150);
   };
   OB.render = render;
 
