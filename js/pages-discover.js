@@ -198,8 +198,8 @@ window.OB = window.OB || {};
               </div>
             </section>
             <div class="stack" style="gap:12px">
-              <p class="text-sm muted">By proceeding, you agree to the <a href="#home">terms and conditions</a>.</p>
-              <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details.</p>
+              <label class="check"><input type="checkbox" id="xc-terms" required ${OB.state.xc.terms ? 'checked' : ''}><span>By proceeding, you agree to the <a href="#home">terms and conditions</a>.</span></label>
+              <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details and tick the terms and conditions.</p>
             </div>
             <div><button class="btn btn-primary btn-lg" type="submit">Pay ${fmt(total)}</button></div>
           </div>

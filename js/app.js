@@ -406,9 +406,9 @@ window.OB = window.OB || {};
     'exp-checkout': (form) => {
       const need = ['xc-first', 'xc-last', 'xc-email', 'xc-phone'].map((id) => document.getElementById(id));
       need.forEach((i) => i.classList.toggle('is-invalid', !i.value.trim()));
-      const ok = need.every((i) => i.value.trim());
+      const ok = need.every((i) => i.value.trim()) && $('#xc-terms').checked;
       $('#xc-error').hidden = ok;
-      if (!ok) { need.find((i) => !i.value.trim()).focus(); return; }
+      if (!ok) { (need.find((i) => !i.value.trim()) || $('#xc-terms')).focus(); return; }
       S.order = OB.expOrder(OB.find(OB.experiences, form.dataset.id)); S.payMethod = 'card';
       openOverlay(OB.paystackModal(OB.orderTotal(S.order)));
     },
