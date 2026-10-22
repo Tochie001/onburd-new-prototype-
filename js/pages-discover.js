@@ -186,7 +186,6 @@ window.OB = window.OB || {};
                 <div class="field-group col-6"><label for="xc-email">Email address</label><input class="input" id="xc-email" type="email" value="${v('email', u?.email)}" placeholder="you@example.com" required autocomplete="email"></div>
                 <div class="field-group col-6"><label for="xc-phone">Phone number</label>
                   <div class="phone-input"><select class="select" id="xc-cc" aria-label="Country code"><option>🇳🇬 +234</option><option>🇬🇭 +233</option><option>🇰🇪 +254</option></select><input class="input" id="xc-phone" type="tel" value="${v('phone', '803 456 7890')}" placeholder="803 456 7890" required autocomplete="tel-national"></div></div>
-                <div class="field-group col-12"><label for="xc-note">Note for the operator <span class="muted">(optional)</span></label><textarea class="textarea" id="xc-note" placeholder="Dietary needs, pickup hotel, accessibility…">${esc(xc.note || '')}</textarea></div>
               </div>
             </section>
             <section class="panel" aria-labelledby="xc-pay">
