@@ -566,7 +566,7 @@ window.OB = window.OB || {};
         <section class="fc-card fc-doc" aria-label="E-ticket">
           <div class="fc-doc-head">
             <img src="assets/brand/logo-blue.svg" alt="onburd" class="fc-logo">
-            <div class="row"><button class="btn btn-secondary btn-sm" type="button" data-action="toast" data-msg="E-tickets sent to ${esc(email)}">${icon('mail')} Email e-tickets</button><a class="btn btn-primary btn-sm" href="#bookings">View in My bookings</a></div>
+            <div class="row"><button class="btn btn-secondary btn-sm" type="button" data-action="toast" data-msg="E-tickets sent to ${esc(email)}">${icon('mail')} Email e-tickets</button><button class="btn btn-primary btn-sm" type="button" data-action="print">Print</button></div>
           </div>
           <dl class="fc-kv fc-kv-2"><div><dt>Booking number</dt><dd class="fc-big">${bookingNo}</dd></div><div><dt>Booking date</dt><dd>22 Oct 2026</dd></div></dl>
           <dl class="fc-kv">

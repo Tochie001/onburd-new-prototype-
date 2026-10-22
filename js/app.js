@@ -190,6 +190,7 @@ window.OB = window.OB || {};
     'more-flights': (el) => { S.openMore = S.openMore === el.dataset.id ? null : el.dataset.id; render(); },
     'scroll-to': (el) => document.getElementById(el.dataset.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
     'x-bank-show': () => { S.xBankShown = true; render(); },
+    print: () => { try { window.print(); } catch { toast('Printing is not available here.'); } },
     'toggle-ex-search': () => { S.exOpen = !S.exOpen; render(); },
     'toggle-search': () => { S.searchOpen = !S.searchOpen; render(); },
     'toggle-filters': () => { S.filtersOpen = !S.filtersOpen; render(); },

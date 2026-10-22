@@ -378,7 +378,7 @@ window.OB = window.OB || {};
     const size = () => { c.width = innerWidth * dpr; c.height = innerHeight * dpr; };
     size(); addEventListener('resize', size);
     const colors = ['#2C90FF', '#F58220', '#12B76A', '#FFC23D', '#E11D48', '#7C3AED'];
-    const bits = Array.from({ length: 160 }, () => ({
+    const bits = Array.from({ length: 55 }, () => ({
       x: Math.random() * innerWidth, y: -20 - Math.random() * innerHeight * 0.6,
       w: 6 + Math.random() * 6, h: 8 + Math.random() * 8, vy: 2 + Math.random() * 3, vx: -1 + Math.random() * 2,
       r: Math.random() * Math.PI, vr: -0.15 + Math.random() * 0.3, col: colors[(Math.random() * colors.length) | 0]
