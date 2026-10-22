@@ -189,10 +189,10 @@ window.OB = window.OB || {};
               </div>
             </section>
             <section class="panel" aria-labelledby="xc-pay">
-              <div class="panel-head"><div><h2 id="xc-pay">Payment</h2><p>You'll confirm the payment in a secure Paystack window.</p></div></div>
+              <div class="panel-head"><div><h2 id="xc-pay">Payment</h2><p>You'll confirm the payment in a secure window.</p></div></div>
               <div class="pay-one" role="radiogroup" aria-label="Payment method">
                 <label class="radio-card is-single"><input type="radio" name="xc-method" value="paystack" checked>
-                  <span class="pay-one-text"><strong>Pay with card or bank</strong><small>Cards, bank transfer and USSD, processed securely by Paystack</small></span>
+                  <span class="pay-one-text"><strong>Pay with card or bank</strong><small>Cards, bank transfer and USSD</small></span>
                   ${OB.paystackLogo()}
                 </label>
               </div>
