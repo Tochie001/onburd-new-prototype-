@@ -492,34 +492,33 @@ window.OB = window.OB || {};
   const confirmInfo = (order) => {
     const S = OB.state;
     const lines = order.lines;
-    const count = (re) => lines.reduce((n, [l]) => n + (+((l.match(re) || [])[1]) || 0), 0);
+    const fmtDay = (d) => d;
     switch (order.kind) {
       case 'movie': {
         const m = OB.find(OB.movies, S.movieId || 'hail-mary'); const c = OB.find(OB.cinemas, S.show.cinema);
         const seats = [...S.seats];
-        return { media: m.img ? `<img src="${img(m.img)}" alt="">` : OB.poster(m), tag: `${m.genre.split(' · ')[0]} movie`, title: m.title,
-          place: `<strong>${esc(c.name)}:</strong> ${esc(c.area)}, Lagos`, when: `${S.show.date} · ${S.show.time}`,
-          items: [[`Seats ${seats.join(', ') || '—'}`, null], ...lines], countLabel: 'Total tickets', count: seats.length || count(/× (\d+)/), share: ['movie', m.id] };
+        return { ic: 'film', heading: 'Your tickets', title: m.title, when: `${S.show.date} 2026, ${S.show.time}`, place: `${c.name}, ${c.area}, Lagos`,
+          items: [[`Seats ${seats.join(', ') || '—'}`, null], ...lines], more: ['movies', 'Browse more movies'],
+          body: (e) => `We have emailed your e-tickets to ${e}. Show them at the cinema entrance.` };
       }
       case 'event': {
         const e = OB.find(OB.events, S.eventId || 'afrobeats-live');
-        return { media: `<img src="${img(e.img)}" alt="">`, tag: e.category, title: e.title, place: `<strong>Venue:</strong> ${esc(e.venue)}`,
-          when: `${e.date} 2026 · ${e.time}`, items: lines, countLabel: 'Total tickets', count: count(/× (\d+)/), share: ['event', e.id] };
+        return { ic: 'ticket', heading: 'Your tickets', title: e.title, when: `${e.date} 2026, ${e.time}`, place: `${e.venue}, ${e.city}`,
+          items: lines, more: ['events', 'Browse more events'], body: (m) => `We have emailed your e-tickets to ${m}. Show them at the gate.` };
       }
       case 'experience': {
         const x = OB.find(OB.experiences, (S.order && S.order.back || '').split('~')[1] || 'egypt-nile');
-        return { media: `<img src="${img(x.img)}" alt="">`, tag: 'Experience', title: x.title, place: `<strong>${esc(x.place)}</strong> · Operated by ${esc(x.by)}`,
-          when: '', items: lines, countLabel: 'Total guests', count: count(/× (\d+)/), share: ['experience', x.id] };
+        return { ic: 'compass', heading: 'Your booking', title: x.title, when: `Operated by ${x.by}`, place: x.place,
+          items: lines, more: ['experiences', 'Browse more experiences'], body: (m) => `We have emailed your voucher to ${m}. ${x.by} will contact you with the next steps.` };
       }
       case 'extras':
-        return { media: `<span class="cf-icon">${icon('luggage')}</span>`, tag: 'Travel extras', title: 'Airport add-ons', place: `<strong>${esc(S.ex.airport)}</strong>`,
-          when: S.ex.date, items: lines, countLabel: 'Services', count: lines.length, share: ['', ''] };
+        return { ic: 'luggage', heading: 'Your travel extras', title: 'Airport add-ons', when: S.ex.date, place: S.ex.airport,
+          items: lines, more: ['extras', 'Browse more extras'], body: (m) => `We have emailed your service details to ${m}.` };
       default: {
         const fs = S.fs;
-        return { media: `<img src="${img('dest-dubai')}" alt="">`, tag: fs.trip === 'round' ? 'Return flight' : fs.trip === 'multi' ? 'Multi-city' : 'One-way flight',
-          title: OB.routeTitle ? OB.routeTitle() : order.item.title, place: `<strong>${esc(order.item.sub.split(' · ')[0])}</strong> · ${esc(fs.cabin)}`,
-          when: `${OB.fsDate(fs.dep)}${fs.trip === 'round' && fs.ret ? ' – ' + OB.fsDate(fs.ret) : ''}`, items: lines, countLabel: 'Passengers',
-          count: fs.adults + fs.children + fs.infants, share: ['search', 'LOS-DXB'] };
+        return { ic: 'plane', heading: 'Your trip', title: OB.routeTitle ? OB.routeTitle() : order.item.title,
+          when: `${OB.fsDate(fs.dep)}${fs.trip === 'round' && fs.ret ? ' – ' + OB.fsDate(fs.ret) : ''}`, place: `${order.item.sub.split(' · ')[0]} · ${fs.cabin}`,
+          items: lines, more: ['flights', 'Search more flights'], body: (m) => `We have emailed your e-ticket and itinerary to ${m}.` };
       }
     }
   };
@@ -533,43 +532,37 @@ window.OB = window.OB || {};
     const email = xc.email || u.email || 'adaeze.mensah@gmail.com';
     const phone = xc.phone ? `+234 ${xc.phone}` : (u.phone || '+234 803 456 7890');
     const total = OB.orderTotal(order);
+    const digits = order.ref.replace(/\D/g, '');
+    const bookingNo = `2610220${digits.padStart(6, '0')}`;
+    const payRef = `20261022${digits.slice(-5).padStart(5, '1')}`;
     return `
       ${OB.nav()}
-      <main class="container page-body cf-page">
-        <section class="cf-card cf-top">
-          <button class="btn btn-secondary btn-sm cf-share" type="button" data-action="share" data-kind="${ci.share[0]}" data-id="${ci.share[1]}">${icon('share')} Share</button>
-          <div class="cf-head">
-            <span class="confirm-icon">${icon('check')}</span>
-            <h1>Payment successful</h1>
-            <p>Your booking is confirmed. We've sent your ${{ movie: 'tickets', event: 'tickets', experience: 'voucher', extras: 'service details', flight: 'e-ticket' }[order.kind] || 'confirmation'} to ${esc(email)}.</p>
-          </div>
-          <dl class="cf-meta">
-            <div><dt>Booking number</dt><dd>${order.ref}</dd></div>
-            <div><dt>Booking date</dt><dd>22 Oct 2026</dd></div>
-            <div><dt>Booking status</dt><dd>Confirmed</dd></div>
-            <div><dt>Payment status</dt><dd class="cf-ok">Successful</dd></div>
-          </dl>
+      <main class="container cf2">
+        <section class="cf2-head">
+          <span class="confirm-icon">${icon('check')}</span>
+          <h1>Payment successful</h1>
+          <p>Your payment went through. ${esc(ci.body(email))}</p>
         </section>
-        <section class="cf-card cf-summary" aria-labelledby="cf-sum">
-          <h2 id="cf-sum">Booking summary</h2>
-          <div class="cf-item">
-            <div class="cf-media">${ci.media}</div>
-            <div class="cf-info">
-              <span class="cf-tag">${esc(ci.tag)}</span>
-              <h3>${esc(ci.title)}</h3>
-              <p>${ci.place}</p>
-              ${ci.when ? `<p class="cf-when">${esc(ci.when)}</p>` : ''}
-            </div>
-          </div>
-          <div class="cf-lines">${ci.items.map(([l, v]) => `<div><span>${esc(l)}</span>${v == null ? '' : `<strong>${v < 0 ? '−' + fmt(-v) : fmt(v)}</strong>`}</div>`).join('')}</div>
-          <dl class="cf-contact">
-            <div><dt>Name</dt><dd>${esc(name)}</dd></div>
-            <div><dt>Email</dt><dd>${esc(email)}</dd></div>
-            <div><dt>Phone</dt><dd>${esc(phone)}</dd></div>
-          </dl>
-          <div class="cf-foot"><span>${ci.countLabel} <b>${ci.count}</b></span><span class="cf-total"><em>Amount paid</em><strong>${fmt(total)}</strong></span></div>
+        <section class="cf2-card cf2-ref">
+          <div><span class="eyebrow">Booking number</span><strong class="cf2-no">${bookingNo}</strong><span class="muted text-sm">Sent to ${esc(email)}</span></div>
+          <button class="btn btn-secondary btn-sm" type="button" data-action="copy" data-text="${bookingNo}">${icon('copy')} Copy</button>
         </section>
-        <div class="row cf-actions"><a class="btn btn-primary" href="#bookings">View my bookings</a><a class="btn btn-secondary" href="#home">Back to home</a></div>
+        <section class="cf2-card" aria-labelledby="cf2-h">
+          <h2 id="cf2-h">${ci.heading}</h2>
+          <div class="cf2-item"><span class="cf2-ic">${icon(ci.ic)}</span><div><strong>${esc(ci.title)}</strong><span>${esc(ci.when)}</span></div></div>
+          <p class="cf2-place">${icon('pin')} ${esc(ci.place)}</p>
+          <div class="cf2-lines">
+            ${ci.items.map(([l, v]) => `<div><span>${esc(l)}</span>${v == null ? '' : `<strong>${v < 0 ? '−' + fmt(-v) : fmt(v)}</strong>`}</div>`).join('')}
+            <div><span>Booking status</span><strong class="cf-ok">Confirmed</strong></div>
+            <div><span>Payment reference</span><strong>${payRef}</strong></div>
+          </div>
+          <div class="cf2-paid"><span>Paid</span><strong>${fmt(total)}</strong></div>
+        </section>
+        <section class="cf2-card" aria-labelledby="cf2-by">
+          <h2 id="cf2-by">Booked by</h2>
+          <div class="cf2-person"><div><strong>${esc(name)}</strong><span>${esc(email)}</span></div><span>${esc(phone)}</span></div>
+        </section>
+        <div class="row cf-actions"><a class="btn btn-primary" href="#${ci.more[0]}">${ci.more[1]}</a><a class="btn btn-secondary" href="#home">Back to home</a></div>
       </main>
       ${OB.footer()}`;
   };

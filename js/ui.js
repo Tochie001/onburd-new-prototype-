@@ -369,5 +369,30 @@ window.OB = window.OB || {};
       ${button}
     </div>`;
   OB.paystackLogo = () => `<span class="paystack-logo" aria-label="Paystack"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="2" width="18" height="3" rx="1.5" fill="#00C3F7"/><rect x="1" y="7" width="18" height="3" rx="1.5" fill="#011B33"/><rect x="1" y="12" width="18" height="3" rx="1.5" fill="#00C3F7"/><rect x="1" y="17" width="11" height="3" rx="1.5" fill="#011B33"/></svg><b>paystack</b></span>`;
+  OB.confetti = () => {
+    if (typeof window.matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelector('.confetti')?.remove();
+    const c = document.createElement('canvas'); c.className = 'confetti'; c.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(c);
+    const ctx = c.getContext('2d'); const dpr = window.devicePixelRatio || 1;
+    const size = () => { c.width = innerWidth * dpr; c.height = innerHeight * dpr; };
+    size(); addEventListener('resize', size);
+    const colors = ['#2C90FF', '#F58220', '#12B76A', '#FFC23D', '#E11D48', '#7C3AED'];
+    const bits = Array.from({ length: 160 }, () => ({
+      x: Math.random() * innerWidth, y: -20 - Math.random() * innerHeight * 0.6,
+      w: 6 + Math.random() * 6, h: 8 + Math.random() * 8, vy: 2 + Math.random() * 3, vx: -1 + Math.random() * 2,
+      r: Math.random() * Math.PI, vr: -0.15 + Math.random() * 0.3, col: colors[(Math.random() * colors.length) | 0]
+    }));
+    const end = performance.now() + 4200;
+    const tick = (t) => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, innerWidth, innerHeight);
+      const fade = Math.max(0, Math.min(1, (end - t) / 800));
+      ctx.globalAlpha = fade;
+      bits.forEach((b) => { b.x += b.vx + Math.sin(b.y / 40) * 0.6; b.y += b.vy; b.r += b.vr;
+        ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.r); ctx.fillStyle = b.col; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h * Math.abs(Math.cos(b.r))); ctx.restore(); });
+      if (t < end && c.isConnected) requestAnimationFrame(tick); else { c.remove(); removeEventListener('resize', size); }
+    };
+    requestAnimationFrame(tick);
+  };
   OB.orderTotal = (order) => order.lines.reduce((a, [, v]) => a + v, 0);
 })();
