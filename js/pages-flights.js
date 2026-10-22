@@ -523,8 +523,89 @@ window.OB = window.OB || {};
     }
   };
 
+  const flightConfirm = (order) => {
+    const S = OB.state; const f = OB.getFlight(S.flightId); const al = OB.airlines[f.al].name;
+    const u = S.loggedIn ? S.user : {}; const pi = S.paxInfo || {};
+    const first = pi.first || u.first || 'Adaeze', last = pi.last || u.last || 'Mensah';
+    const title = pi.title || (pi.gender === 'Male' ? 'Mr' : 'Ms');
+    const email = pi.email || u.email || 'adaeze.mensah@gmail.com';
+    const phone = `${pi.cc || '+234'} ${pi.phone || '803 456 7890'}`;
+    const digits = order.ref.replace(/\D/g, '');
+    const bookingNo = `2610220${digits.padStart(6, '0')}`;
+    const pnr = `${f.al}${digits.slice(-2)}KX${String.fromCharCode(65 + (+digits.slice(-1) % 20))}`;
+    const dob = pi.dob || u.dob || '1992-04-14';
+    const legs = OB.journeyLegs(f);
+    const ap = (code) => `${OB.airports[code] || OB.airport(code).name} (${code})`;
+    const day = (iso, plus) => OB.fsDate(plus ? nextDay(iso) : iso, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    const journeyRow = ([leg, iso]) => {
+      const segs = segments(f, leg);
+      const col = (label, ic, date, time, place) => `<div class="fc-col"><span class="fc-lbl">${icon(ic)} ${label}</span><strong>${date}</strong><small>${time}</small><span class="fc-ap">${esc(place)}</span></div>`;
+      return `<div class="fc-journey">
+        ${col('Departure', 'takeoff', day(iso), leg.dep, ap(leg.from))}
+        ${leg.stops ? col('Layover', 'clock', day(iso, segs[1].day), `${segs[0].arr} – ${segs[1].dep} · 2h 50m`, ap(leg.via)) : '<div class="fc-col fc-direct"><span class="fc-lbl">Non-stop</span></div>'}
+        ${col('Arrival', 'landing', day(iso, leg.plus), leg.arr, ap(leg.to))}
+      </div>`;
+    };
+    const out = legs[0][0];
+    return `
+      ${OB.nav()}
+      <main class="container fc">
+        <section class="fc-card fc-top">
+          <div class="fc-head">
+            <span class="confirm-icon">${icon('check')}</span>
+            <h1>We have received your booking</h1>
+            <p>Your booking has been placed and paid. We've emailed your e-ticket and itinerary to ${esc(email)}. You can manage your trip from My bookings at any time.</p>
+            <div class="fc-id"><span>Booking ID: <strong>${bookingNo}</strong></span><button class="link-btn text-xs" type="button" data-action="copy" data-text="${bookingNo}">${icon('copy')} Copy</button></div>
+          </div>
+          <dl class="fc-meta">
+            <div><dt>Booking ref</dt><dd>${order.ref}</dd></div>
+            <div><dt>Booking date</dt><dd>22 Oct 2026</dd></div>
+            <div><dt>Payment status</dt><dd class="cf-ok">Payment successful</dd></div>
+          </dl>
+        </section>
+        <section class="fc-card fc-doc" aria-label="E-ticket">
+          <div class="fc-doc-head">
+            <img src="assets/brand/logo-blue.svg" alt="onburd" class="fc-logo">
+            <div class="row"><button class="btn btn-secondary btn-sm" type="button" data-action="toast" data-msg="E-tickets sent to ${esc(email)}">${icon('mail')} Email e-tickets</button><a class="btn btn-primary btn-sm" href="#bookings">View in My bookings</a></div>
+          </div>
+          <dl class="fc-kv fc-kv-2"><div><dt>Booking number</dt><dd class="fc-big">${bookingNo}</dd></div><div><dt>Booking date</dt><dd>22 Oct 2026</dd></div></dl>
+          <dl class="fc-kv">
+            <div><dt>Passenger name</dt><dd>${esc(title)}. ${esc(first)} ${esc(last)}</dd></div>
+            <div><dt>Passport number</dt><dd>${esc(pi.passport || 'A09345821')}</dd></div>
+            <div><dt>E-ticket number</dt><dd>157-${digits.padStart(10, '2')}</dd></div>
+            <div><dt>Airline PNR</dt><dd>${pnr}</dd></div>
+            <div><dt>Nationality</dt><dd>${esc(pi.nat || 'Nigerian')}</dd></div>
+            <div><dt>Gender</dt><dd>${esc(pi.gender || 'Female')}</dd></div>
+            <div><dt>Date of birth</dt><dd>${OB.fsDate(dob, { day: 'numeric', month: 'short', year: 'numeric' })}</dd></div>
+          </dl>
+          <h2>Flight details</h2>
+          <div class="fc-flight">
+            <div class="fc-sum">
+              <div class="row">${OB.airlineLogo(f.al)}<div><strong>${al}</strong><small>${AIRCRAFT[f.al]} · ${f.no}</small></div></div>
+              <div class="fc-times"><div><strong>${out.dep} (${out.from})</strong><small>${OB.airport(out.from).city}</small></div>
+                <div class="fc-mid"><small>${out.dur}</small><i></i><small>${out.stops ? '1 stop' : 'Non-stop'}</small></div>
+                <div><strong>${out.arr} (${out.to})</strong><small>${OB.airport(out.to).city}</small></div></div>
+              ${out.stops ? `<div class="fc-lay"><strong>Layover at ${esc(OB.airport(out.via).city)}, ${out.via}</strong><small>2h 50m</small></div>` : ''}
+            </div>
+            ${legs.map(journeyRow).join('<hr class="fc-dash">')}
+          </div>
+          <p class="fc-note">Check in online 24 hours before departure, or at the airport at least 3 hours before an international flight. Baggage: ${f.bag} checked and 1 × 7kg cabin bag per passenger. Bring the passport used for this booking.</p>
+          <h2>Contact information</h2>
+          <dl class="fc-kv fc-kv-3"><div><dt>Full name</dt><dd>${esc(first)} ${esc(last)}</dd></div><div><dt>Email address</dt><dd>${esc(email)}</dd></div><div><dt>Phone number</dt><dd>${esc(phone)}</dd></div></dl>
+          <h2>Fare details</h2>
+          <div class="fc-fare">
+            ${order.lines.map(([l, v]) => `<div><span>${esc(l)}</span><strong>${v < 0 ? '−' + fmt(-v) : fmt(v)}</strong></div>`).join('')}
+            <div class="fc-fare-total"><span>Total</span><strong>${fmt(OB.orderTotal(order))}</strong></div>
+          </div>
+        </section>
+        <div class="row cf-actions"><a class="btn btn-primary" href="#home~flights">Search more flights</a><a class="btn btn-secondary" href="#home">Back to home</a></div>
+      </main>
+      ${OB.footer()}`;
+  };
+
   OB.pages.confirmed = () => {
     const order = OB.state.order || OB.flightOrder();
+    if (order.kind === 'flight') return flightConfirm(order);
     const S = OB.state;
     const ci = confirmInfo(order);
     const xc = S.xc || {}; const u = S.loggedIn ? S.user : {};

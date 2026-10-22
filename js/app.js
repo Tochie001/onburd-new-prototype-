@@ -416,6 +416,9 @@ window.OB = window.OB || {};
     'list-search': (form) => { form.querySelector('input')?.blur(); },
     newsletter: (form) => { toast('Subscribed. Your first deals email arrives Thursday.'); form.reset(); },
     pax: () => {
+      const val = (id) => document.getElementById(id)?.value.trim() || '';
+      S.paxInfo = { title: val('p-title'), first: val('p-first'), last: val('p-last'), dob: val('p-dob'), gender: val('p-gender'), nat: val('p-nat'),
+        passport: val('p-pass'), email: val('c-email'), phone: val('c-phone'), cc: val('c-cc').replace(/[^+\d]/g, '') };
       const ok = $('#tc-general').checked;
       $('#pax-error').hidden = ok;
       if (ok) go('flight-extras'); else $('#tc-general').focus();
