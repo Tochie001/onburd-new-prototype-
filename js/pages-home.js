@@ -274,7 +274,7 @@ window.OB = window.OB || {};
       meta: (e) => `${e.date} · ${e.venue}`, price: (e) => `From ${OB.fmt(e.price)}` },
     experiences: { label: 'Search experiences', ph: 'Tours, day trips, spa days, places…', go: 'experiences', btn: 'Find experiences', empty: 'Try a place like “Egypt” or “Lagos”, or “safari”.',
       list: () => OB.experiences, href: (x) => `#experience~${x.id}`, hay: (x) => [x.title, x.place, x.by],
-      meta: (x) => `${x.place} · ★ ${x.rating.toFixed(1)}`, price: (x) => `${OB.fmt(x.price)} / ${x.unit}` }
+      meta: (x) => `${x.place} · by ${x.by}`, price: (x) => `${OB.fmt(x.price)} / ${x.unit}` }
   };
   const qHl = (t, q) => { if (!q) return esc(t); const i = t.toLowerCase().indexOf(q.toLowerCase()); return i < 0 ? esc(t) : `${esc(t.slice(0, i))}<mark>${esc(t.slice(i, i + q.length))}</mark>${esc(t.slice(i + q.length))}`; };
   const qPop = (kind) => {

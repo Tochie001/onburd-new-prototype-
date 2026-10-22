@@ -169,7 +169,7 @@ window.OB = window.OB || {};
       <div class="mcard-body">
         <a class="mcard-title" href="#experience~${x.id}" style="color:inherit">${esc(x.title)}</a>
         <div class="mcard-meta">${icon('pin')}<span>${esc(x.place)}</span></div>
-        <div class="mcard-meta"><svg class="icon star" viewBox="0 0 24 24">${OB.ICONS.star}</svg><span><strong style="color:var(--ink)">${x.rating.toFixed(1)}</strong> (${x.reviews}) · by ${esc(x.by)}</span></div>
+        <div class="mcard-meta">${icon('user')}<span>by ${esc(x.by)}</span></div>
         <div class="mcard-foot"><span class="price">${fmt(x.price)} <small>/ ${x.unit}</small></span></div>
       </div>
     </article>`;
@@ -181,7 +181,6 @@ window.OB = window.OB || {};
       <div class="mcard-body">
         <span class="mcard-title">${esc(h.title)}</span>
         <div class="mcard-meta">${icon('pin')}<span>${esc(h.place)}</span></div>
-        <div class="mcard-meta"><svg class="icon star" viewBox="0 0 24 24">${OB.ICONS.star}</svg><span><strong style="color:var(--ink)">${h.rating.toFixed(1)}</strong> (${h.reviews} reviews)</span></div>
         <div class="mcard-foot">
           <span class="price">${fmt(h.price)} <small>/ night</small></span>
           <span class="badge ${h.note === 'Pay at hotel' ? 'badge-warning' : 'badge-success'}">${esc(h.note)}</span>
@@ -228,8 +227,8 @@ window.OB = window.OB || {};
     switch (kind) {
       case 'event': { const e = F(OB.events, id); return { title: e.title, meta: `${e.date} · ${e.time} · ${e.venue}`, price: `From ${fmt(e.price)}`, img: e.img, path: `e/${e.id}` }; }
       case 'deal': { const d = F(OB.flightDeals, id); return { title: `${d.from} → ${d.to}`, meta: `${d.duration} · ${d.stops} · ${d.cabin}`, price: `Return from ${fmt(d.price)}`, img: d.img, path: `f/${d.id}` }; }
-      case 'experience': { const x = F(OB.experiences, id); return { title: x.title, meta: `${x.place} · ★ ${x.rating.toFixed(1)} (${x.reviews})`, price: `${fmt(x.price)} / ${x.unit}`, img: x.img, path: `x/${x.id}` }; }
-      case 'hotel': { const h = F(OB.hotels, id); return { title: h.title, meta: `${h.place} · ★ ${h.rating.toFixed(1)}`, price: `${fmt(h.price)} / night`, img: h.img, path: `h/${h.id}` }; }
+      case 'experience': { const x = F(OB.experiences, id); return { title: x.title, meta: `${x.place} · by ${x.by}`, price: `${fmt(x.price)} / ${x.unit}`, img: x.img, path: `x/${x.id}` }; }
+      case 'hotel': { const h = F(OB.hotels, id); return { title: h.title, meta: h.place, price: `${fmt(h.price)} / night`, img: h.img, path: `h/${h.id}` }; }
       case 'dining': { const d = F(OB.dining, id); return { title: d.title, meta: `${d.kind} · ${d.place}`, price: `About ${fmt(d.price)} per person`, img: d.img, path: `d/${d.id}` }; }
       case 'movie': { const m = F(OB.movies, id); return { title: m.title, meta: `${m.genre} · ${m.runtime} · ${m.rating}`, price: 'Now showing in Lagos', img: m.img, movie: m, path: `m/${m.id}` }; }
       case 'search': {

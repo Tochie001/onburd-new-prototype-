@@ -225,7 +225,6 @@ window.OB = window.OB || {};
             <div class="detail-head">
               <h1>${esc(x.title)}</h1>
               <div class="detail-meta">
-                <span><svg class="icon star" viewBox="0 0 24 24">${OB.ICONS.star}</svg><strong>${x.rating.toFixed(1)}</strong></span>
                 <span>${icon('pin')} ${esc(x.place)}</span>
                 <span>${icon('user')} Operated by ${esc(x.by)}</span>
               </div>
@@ -252,10 +251,10 @@ window.OB = window.OB || {};
           <div class="aside-sticky">
             <div class="book-card">
               <h3 class="bc-title" id="bc-tickets">Select tickets</h3>
-              ${[['adults', 'Adult', '12 years and over', OB.expPrices(x).adult], ['children', 'Child', '2 to 11 years', OB.expPrices(x).child]].map(([k, label, note, price]) => {
+              ${[['adults', 'Adult', OB.expPrices(x).adult], ['children', 'Child', OB.expPrices(x).child]].map(([k, label, price]) => {
                 const q = OB.state.expQty[k];
                 return `<div class="bc-tier ${q ? 'is-selected' : ''}">
-                  <div><strong>${label}</strong><small>${note}</small><span class="bc-price">${fmt(price)}</span></div>
+                  <div><strong>${label}</strong><span class="bc-price">${fmt(price)}</span></div>
                   <div class="qty" role="group" aria-label="${label} tickets">
                     <button type="button" data-action="exp-qty" data-k="${k}" data-d="-1" ${q <= 0 ? 'disabled' : ''} aria-label="Remove ${label.toLowerCase()}">${icon('minus')}</button><output>${q}</output>
                     <button type="button" data-action="exp-qty" data-k="${k}" data-d="1" ${q >= 10 ? 'disabled' : ''} aria-label="Add ${label.toLowerCase()}">${icon('plus')}</button></div>

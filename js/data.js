@@ -44,7 +44,7 @@ OB.flightDeals = [
 ];
 
 OB.experiences = [
-  { id: 'egypt-nile', title: '6-Day Egypt Highlights & Nile Cruise', img: 'egypt-pyramid', by: 'Nice Tours', place: 'Cairo & Luxor, Egypt', price: 3190000, unit: 'person', rating: 4.8, reviews: 32, tag: 'Top rated' },
+  { id: 'egypt-nile', title: '6-Day Egypt Highlights & Nile Cruise', img: 'egypt-pyramid', by: 'Nice Tours', place: 'Cairo & Luxor, Egypt', price: 3190000, unit: 'person', rating: 4.8, reviews: 32 },
   { id: 'maldives-escape', title: '5 Nights Overwater Escape in the Maldives', img: 'cat-experiences', by: 'YellowLyfe Tours', place: 'North Malé Atoll, Maldives', price: 4850000, unit: 'person', rating: 4.9, reviews: 18 },
   { id: 'accra-weekend', title: 'Accra Weekend: Culture & Food Trail', img: 'dest-accra', by: 'Kente Trails', place: 'Accra, Ghana', price: 620000, unit: 'person', rating: 4.7, reviews: 54 },
   { id: 'erin-ijesha', title: 'Erin-Ijesha Waterfalls Day Trip', img: 'exp-waterfall', by: 'Naija Hikers', place: 'Osun State', price: 45000, unit: 'person', rating: 4.6, reviews: 121 },
