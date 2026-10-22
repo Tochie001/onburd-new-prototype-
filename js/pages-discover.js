@@ -156,10 +156,10 @@ window.OB = window.OB || {};
     if (adults) lines.push([`Adult × ${adults}`, pr.adult * adults]);
     if (children) lines.push([`Child × ${children}`, pr.child * children]);
     return {
-      kind: 'experience', summaryTitle: 'Your trip', steps: ['Experience', 'Checkout'], payStep: 1, back: `experience~${x.id}`, ref: 'OB-46102',
+      kind: 'experience', summaryTitle: 'Order summary', steps: ['Experience', 'Checkout'], payStep: 1, back: `experience~${x.id}`, ref: 'OB-46102',
       item: { img: x.img, title: x.title, sub: `${x.place} · ${OB.expPax()}` },
       lines,
-      confirmTitle: 'Your experience is booked', confirmBody: `${x.by} will contact you within 24 hours with pickup details. Your voucher is in My bookings.`
+      confirmTitle: 'Your order is confirmed', confirmBody: ''
     };
   };
 

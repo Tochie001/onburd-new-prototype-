@@ -387,11 +387,11 @@ window.OB = window.OB || {};
                 <span class="sfield-icon">${icon('calendar')}</span>
                 <span class="sfield-body"><span class="sf-label">Departure</span><span class="sf-value ${fs.pop === 'dates' && fs.picking === 'dep' ? 'is-picking' : ''}">${OB.fsField(fs.dep)}</span></span>
               </button>
-              <span class="sf-divider" aria-hidden="true"></span>
+              ${round ? `<span class="sf-divider" aria-hidden="true"></span>
               <button class="sf-half" type="button" data-action="fs-pop" data-pop="dates" data-pick="ret" aria-expanded="${fs.pop === 'dates'}" aria-haspopup="dialog">
                 <span class="sfield-icon">${icon('calendar')}</span>
-                <span class="sfield-body"><span class="sf-label">Return</span><span class="sf-value ${fs.pop === 'dates' && fs.picking === 'ret' ? 'is-picking' : ''} ${round && fs.ret ? '' : 'is-empty'}">${round ? (fs.ret ? OB.fsField(fs.ret) : 'Select date') : 'Add return'}</span></span>
-              </button>
+                <span class="sfield-body"><span class="sf-label">Return</span><span class="sf-value ${fs.pop === 'dates' && fs.picking === 'ret' ? 'is-picking' : ''} ${fs.ret ? '' : 'is-empty'}">${fs.ret ? OB.fsField(fs.ret) : 'Select date'}</span></span>
+              </button>` : ''}
             </div>
             ${fs.pop === 'dates' ? OB.calendarPop() : ''}
           </div>
