@@ -541,7 +541,7 @@ window.OB = window.OB || {};
           <div class="fc-head">
             <span class="confirm-icon">${icon('check')}</span>
             <h1>We have received your booking</h1>
-            <p>Your booking has been placed and paid. We've emailed your e-ticket and itinerary to ${esc(email)}. You can manage your trip from My bookings at any time.</p>
+            <p>Your e-ticket will be issued within 30 minutes. We have emailed your itinerary and receipt to ${esc(email)}.</p>
             <div class="fc-id"><span>Booking ID: <strong>${bookingNo}</strong></span><button class="link-btn text-xs" type="button" data-action="copy" data-text="${bookingNo}">${icon('copy')} Copy</button></div>
           </div>
           <dl class="fc-meta">
