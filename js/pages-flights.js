@@ -406,20 +406,44 @@ window.OB = window.OB || {};
   };
 
   /* ---------- Shared payment + confirmation (all products) ---------- */
-  OB.paymentPanel = (termsId, checked = false) => `
+  OB.pssPlan = (total, months = OB.state.pssMonths) => {
+    const deposit = Math.round(total * 0.3 / 100) * 100;
+    const inst = Math.ceil((total - deposit) / months / 100) * 100;
+    return { deposit, inst, months, due: ['15 Nov 2026', '15 Dec 2026', '15 Jan 2027', '15 Feb 2027', '15 Mar 2027', '15 Apr 2027'].slice(0, months) };
+  };
+  OB.payNow = (total) => (OB.state.payChoice === 'pss' ? OB.pssPlan(total).deposit : total);
+  OB.paymentPanel = (termsId, checked = false, total = 0) => {
+    const pss = OB.state.payChoice === 'pss';
+    const plan = OB.pssPlan(total);
+    return `
     <section class="panel" aria-labelledby="pay-h">
       <div class="panel-head"><div><h2 id="pay-h">Payment</h2><p>You'll confirm the payment in a secure window.</p></div></div>
       <div class="pay-one" role="radiogroup" aria-label="Payment method">
-        <label class="radio-card is-single"><input type="radio" name="pay-method" value="paystack" checked>
+        <label class="radio-card is-single"><input type="radio" name="pay-method" value="paystack" data-action="pay-choice" ${pss ? '' : 'checked'}>
           <span class="pay-one-text"><strong>Pay with card or bank</strong><small>Cards, bank transfer and USSD</small></span>
           ${OB.paystackLogo()}
         </label>
+        <label class="radio-card is-single"><input type="radio" name="pay-method" value="pss" data-action="pay-choice" ${pss ? 'checked' : ''}>
+          <span class="pay-one-text"><strong>Pay Small Small</strong><small>Pay 30% today and spread the rest. No interest.</small></span>
+          <img class="pss-badge" src="assets/brand/pss-logo.svg" alt="Pay Small Small">
+        </label>
+        ${pss ? `<div class="pss-plan">
+          <div class="plan-grid" role="radiogroup" aria-label="Instalment plan">
+            ${[2, 3, 6].map((n) => `<label class="plan"><input type="radio" name="pss" value="${n}" data-action="pss-plan" ${plan.months === n ? 'checked' : ''}><strong>${n} months</strong><span>${fmt(OB.pssPlan(total, n).inst)}/month</span></label>`).join('')}
+          </div>
+          <div class="schedule">
+            <div><span>Today (30% deposit)</span><strong class="num">${fmt(plan.deposit)}</strong></div>
+            ${plan.due.map((d) => `<div><span>${d}</span><strong class="num">${fmt(plan.inst)}</strong></div>`).join('')}
+          </div>
+          <p class="text-xs muted">Your booking is confirmed once the final instalment is paid.</p>
+        </div>` : ''}
       </div>
     </section>
     <div class="stack" style="gap:12px">
       <label class="check"><input type="checkbox" id="${termsId}" required ${checked ? 'checked' : ''}><span>By proceeding, you agree to the <a href="#home">terms and conditions</a>.</span></label>
       <p class="text-xs" id="${termsId}-error" style="color:var(--danger-ink)" hidden>Please tick the terms and conditions to continue.</p>
     </div>`;
+  };
 
   OB.pages.payment = () => {
     const order = OB.state.order || OB.flightOrder();
@@ -431,8 +455,8 @@ window.OB = window.OB || {};
         <form class="with-aside" style="margin-top:28px" data-form="pay" novalidate>
           <div class="stack" style="gap:24px">
             ${OB.backTitle('Payment', order.back)}
-            ${OB.paymentPanel('pay-terms', OB.state.payTerms)}
-            <div><button class="btn btn-primary btn-lg" type="submit">Pay ${fmt(total)}</button></div>
+            ${OB.paymentPanel('pay-terms', OB.state.payTerms, total)}
+            <div><button class="btn btn-primary btn-lg" type="submit">${OB.state.payChoice === 'pss' ? `Pay ${fmt(OB.payNow(total))} deposit` : `Pay ${fmt(total)}`}</button></div>
           </div>
           <div class="aside-sticky">${OB.orderSummary(order)}
             <div class="assure"><span>${icon('check')} Best price guaranteed</span></div>
@@ -569,6 +593,7 @@ window.OB = window.OB || {};
           <div class="fc-fare">
             ${order.lines.map(([l, v]) => `<div><span>${esc(l)}</span><strong>${v < 0 ? '−' + fmt(-v) : fmt(v)}</strong></div>`).join('')}
             <div class="fc-fare-total"><span>Total</span><strong>${fmt(OB.orderTotal(order))}</strong></div>
+            ${S.payMethod === 'pss' ? `<div><span>Paid today (Pay Small Small deposit)</span><strong>${fmt(OB.pssPlan(OB.orderTotal(order)).deposit)}</strong></div><div class="muted"><span>Balance: ${OB.pssPlan(OB.orderTotal(order)).months} instalments of ${fmt(OB.pssPlan(OB.orderTotal(order)).inst)}</span></div>` : ''}
           </div>
         </section>
         <div class="row cf-actions"><a class="btn btn-primary" href="#home~flights">Search more flights</a><a class="btn btn-secondary" href="#home">Back to home</a></div>
@@ -610,7 +635,8 @@ window.OB = window.OB || {};
             <div><span>Booking status</span><strong class="cf-ok">Confirmed</strong></div>
             <div><span>Payment reference</span><strong>${payRef}</strong></div>
           </div>
-          <div class="cf2-paid"><span>Paid</span><strong>${fmt(total)}</strong></div>
+          ${S.payMethod === 'pss' ? `<div class="cf2-lines" style="border:0;padding:0"><div><span>Pay Small Small: ${OB.pssPlan(total).months} instalments of ${fmt(OB.pssPlan(total).inst)}</span><strong>${fmt(total - OB.pssPlan(total).deposit)} due</strong></div></div>` : ''}
+          <div class="cf2-paid"><span>${S.payMethod === 'pss' ? 'Paid today' : 'Paid'}</span><strong>${fmt(S.payMethod === 'pss' ? OB.pssPlan(total).deposit : total)}</strong></div>
         </section>
         <section class="cf2-card" aria-labelledby="cf2-by">
           <h2 id="cf2-by">Booked by</h2>

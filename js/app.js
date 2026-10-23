@@ -65,7 +65,6 @@ window.OB = window.OB || {};
       case 'home': return () => OB.pages.home(arg || S.tab);
       case 'home2': return () => OB.pages.home2(arg || S.tab);
       case 'pay':
-        S.bankShown = false; S.payTerms = false;
         if (arg === 'event' && !Object.values(S.tickets).some(Boolean)) { S.eventId = S.eventId || 'afrobeats-live'; S.tickets = { vip: 2 }; }
         if (arg === 'movie' && !S.seats.size) { S.movieId = S.movieId || 'hail-mary'; S.seats = new Set(['F7', 'F8']); }
         if (arg === 'extras' && !S.addons.size) S.addons = new Set(['protocol']);
@@ -93,6 +92,7 @@ window.OB = window.OB || {};
       clearTimeout(S.homeTimer);
       S.homeTimer = setTimeout(() => { S.homeLoading = false; if (routeName(location.hash) === rn) render(); }, 1400);
     }
+    if (changed && (rn === 'pay' || rn === 'exp-checkout')) { S.bankShown = false; S.payTerms = false; S.payChoice = 'paystack'; }
     if (changed) lastRoute = rn;
     const y = window.scrollY;
     const oldVideo = document.querySelector('.hero-video');
@@ -327,7 +327,7 @@ window.OB = window.OB || {};
     const el = ev.target.closest('[data-action]');
     if (!el) return;
     const name = el.dataset.action;
-    if (['filter-stops', 'filter-airline', 'filter-price', 'filter-refundable', 'price-watch', 'pss-plan', 'exp-date', 'bk-search', 'pw', 'fs-trip', 'fs-cabin', 'm-chain', 'm-branch', 'm-date', 'x-pay'].includes(name)) return;
+    if (['filter-stops', 'filter-airline', 'filter-price', 'filter-refundable', 'price-watch', 'pss-plan', 'exp-date', 'bk-search', 'pw', 'fs-trip', 'fs-cabin', 'm-chain', 'm-branch', 'm-date', 'x-pay', 'pay-choice'].includes(name)) return;
     if (name === 'close-overlay' && ev.target.closest('[data-stop]') && !ev.target.closest('button[data-action="close-overlay"]')) return;
     if (el.tagName !== 'A' || name === 'toast') ev.preventDefault();
     actions[name]?.(el, ev);
@@ -347,6 +347,7 @@ window.OB = window.OB || {};
     if (name === 'fs-trip') { S.fs.trip = el.value; if (el.value === 'round' && !S.fs.ret) { S.fs.pop = 'dates'; S.fs.picking = 'ret'; S.fs.calMonth = S.fs.dep.slice(0, 7); } render(); }
     if (name === 'fs-cabin') S.fs.cabin = el.value;
     if (name === 'x-pay') { S.xPay = el.value; render(); }
+    if (name === 'pay-choice') { S.payChoice = el.value; render(); }
     if (name === 'm-chain') { S.fs.mChain = el.value; S.fs.mBranch = ''; render(); document.getElementById('m-branch')?.focus(); }
     if (name === 'm-branch') S.fs.mBranch = el.value;
     if (name === 'm-date') S.fs.mDate = el.value;
@@ -409,8 +410,8 @@ window.OB = window.OB || {};
       const ok = $('#pay-terms').checked;
       $('#pay-terms-error').hidden = ok;
       if (!ok) { $('#pay-terms').focus(); return; }
-      S.payMethod = 'card';
-      openOverlay(OB.paystackModal(OB.orderTotal(S.order)));
+      S.payMethod = S.payChoice === 'pss' ? 'pss' : 'card';
+      openOverlay(OB.paystackModal(OB.payNow(OB.orderTotal(S.order))));
     },
     'exp-checkout': (form) => {
       const need = ['xc-first', 'xc-last', 'xc-email', 'xc-phone'].map((id) => document.getElementById(id));
@@ -418,8 +419,8 @@ window.OB = window.OB || {};
       const ok = need.every((i) => i.value.trim()) && $('#xc-terms').checked;
       $('#xc-error').hidden = ok;
       if (!ok) { (need.find((i) => !i.value.trim()) || $('#xc-terms')).focus(); return; }
-      S.order = OB.expOrder(OB.find(OB.experiences, form.dataset.id)); S.payMethod = 'card';
-      openOverlay(OB.paystackModal(OB.orderTotal(S.order)));
+      S.order = OB.expOrder(OB.find(OB.experiences, form.dataset.id)); S.payMethod = S.payChoice === 'pss' ? 'pss' : 'card';
+      openOverlay(OB.paystackModal(OB.payNow(OB.orderTotal(S.order))));
     },
     'list-search': (form) => { form.querySelector('input')?.blur(); },
     newsletter: (form) => { toast('Subscribed. Your first deals email arrives Thursday.'); form.reset(); },
@@ -433,7 +434,7 @@ window.OB = window.OB || {};
     },
     card: () => {
       closeOverlay();
-      toast(`Payment of ${fmt(OB.orderTotal(S.order))} successful`);
+      toast(`Payment of ${fmt(OB.payNow(OB.orderTotal(S.order)))} successful`);
       go('confirmed');
     },
     signin: () => {

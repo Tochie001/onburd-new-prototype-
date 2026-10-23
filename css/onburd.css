@@ -477,6 +477,11 @@ button.sfield:hover { border-color: var(--ink-2); }
 .bc-tier strong { font-size: var(--fs-sm); }
 .bc-tier small { font-size: var(--fs-2xs); color: var(--muted); }
 .bc-price { font-weight: 800; font-size: var(--fs-body); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.pay-one { display: grid; gap: 10px; }
+.pss-badge { height: 28px; width: auto; flex: none; padding: 4px 8px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); box-sizing: content-box; }
+.pss-plan { display: grid; gap: 12px; margin-left: 30px; }
+.pss-plan .plan:has(input:checked) { border-color: var(--pss); background: var(--pss-soft); box-shadow: inset 0 0 0 1px var(--pss); }
+@media (max-width: 560px) { .pss-plan { margin-left: 0; } }
 .pay-one .radio-card { align-items: center; gap: 14px; }
 .pay-one-text { display: grid; flex: 1; min-width: 0; }
 .pay-one-text strong { font-size: var(--fs-sm); }
