@@ -65,7 +65,7 @@ window.OB = window.OB || {};
       case 'home': return () => OB.pages.home(arg || S.tab);
       case 'home2': return () => OB.pages.home2(arg || S.tab);
       case 'pay':
-        S.bankShown = false;
+        S.bankShown = false; S.payTerms = false;
         if (arg === 'event' && !Object.values(S.tickets).some(Boolean)) { S.eventId = S.eventId || 'afrobeats-live'; S.tickets = { vip: 2 }; }
         if (arg === 'movie' && !S.seats.size) { S.movieId = S.movieId || 'hail-mary'; S.seats = new Set(['F7', 'F8']); }
         if (arg === 'extras' && !S.addons.size) S.addons = new Set(['protocol']);
@@ -335,6 +335,7 @@ window.OB = window.OB || {};
 
   document.addEventListener('change', (ev) => {
     if (ev.target.id === 'xc-terms') S.xc.terms = ev.target.checked;
+    if (ev.target.id === 'pay-terms') S.payTerms = ev.target.checked;
     const exMap = { 'a-airport': 'airport', 'a-date': 'date', 'a-pax': 'pax' };
     if (exMap[ev.target.id]) S.ex[exMap[ev.target.id]] = ev.target.value;
     const mc = ev.target.id && ev.target.id.match(/^mc-(from|to)-(\d+)$/);
@@ -403,6 +404,13 @@ window.OB = window.OB || {};
       if (target !== 'flights') { go(target); return; }
       S.fs.pop = null; S.searchOpen = false; S.openMore = null;
       startFlightSearch();
+    },
+    pay: () => {
+      const ok = $('#pay-terms').checked;
+      $('#pay-terms-error').hidden = ok;
+      if (!ok) { $('#pay-terms').focus(); return; }
+      S.payMethod = 'card';
+      openOverlay(OB.paystackModal(OB.orderTotal(S.order)));
     },
     'exp-checkout': (form) => {
       const need = ['xc-first', 'xc-last', 'xc-email', 'xc-phone'].map((id) => document.getElementById(id));

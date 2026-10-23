@@ -188,19 +188,8 @@ window.OB = window.OB || {};
                   <div class="phone-input"><select class="select" id="xc-cc" aria-label="Country code"><option>🇳🇬 +234</option><option>🇬🇭 +233</option><option>🇰🇪 +254</option></select><input class="input" id="xc-phone" type="tel" value="${v('phone', '803 456 7890')}" placeholder="803 456 7890" required autocomplete="tel-national"></div></div>
               </div>
             </section>
-            <section class="panel" aria-labelledby="xc-pay">
-              <div class="panel-head"><div><h2 id="xc-pay">Payment</h2><p>You'll confirm the payment in a secure window.</p></div></div>
-              <div class="pay-one" role="radiogroup" aria-label="Payment method">
-                <label class="radio-card is-single"><input type="radio" name="xc-method" value="paystack" checked>
-                  <span class="pay-one-text"><strong>Pay with card or bank</strong><small>Cards, bank transfer and USSD</small></span>
-                  ${OB.paystackLogo()}
-                </label>
-              </div>
-            </section>
-            <div class="stack" style="gap:12px">
-              <label class="check"><input type="checkbox" id="xc-terms" required ${OB.state.xc.terms ? 'checked' : ''}><span>By proceeding, you agree to the <a href="#home">terms and conditions</a>.</span></label>
-              <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details and tick the terms and conditions.</p>
-            </div>
+            ${OB.paymentPanel('xc-terms', OB.state.xc.terms)}
+            <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details and tick the terms and conditions.</p>
             <div><button class="btn btn-primary btn-lg" type="submit">Pay ${fmt(total)}</button></div>
           </div>
           <div class="aside-sticky">${OB.orderSummary(order)}

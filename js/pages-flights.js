@@ -406,65 +406,38 @@ window.OB = window.OB || {};
   };
 
   /* ---------- Shared payment + confirmation (all products) ---------- */
+  OB.paymentPanel = (termsId, checked = false) => `
+    <section class="panel" aria-labelledby="pay-h">
+      <div class="panel-head"><div><h2 id="pay-h">Payment</h2><p>You'll confirm the payment in a secure window.</p></div></div>
+      <div class="pay-one" role="radiogroup" aria-label="Payment method">
+        <label class="radio-card is-single"><input type="radio" name="pay-method" value="paystack" checked>
+          <span class="pay-one-text"><strong>Pay with card or bank</strong><small>Cards, bank transfer and USSD</small></span>
+          ${OB.paystackLogo()}
+        </label>
+      </div>
+    </section>
+    <div class="stack" style="gap:12px">
+      <label class="check"><input type="checkbox" id="${termsId}" required ${checked ? 'checked' : ''}><span>By proceeding, you agree to the <a href="#home">terms and conditions</a>.</span></label>
+      <p class="text-xs" id="${termsId}-error" style="color:var(--danger-ink)" hidden>Please tick the terms and conditions to continue.</p>
+    </div>`;
+
   OB.pages.payment = () => {
     const order = OB.state.order || OB.flightOrder();
     const total = OB.orderTotal(order);
-    const m = OB.state.payMethod;
-    const months = OB.state.pssMonths;
-    const deposit = Math.round(total * 0.3);
-    const inst = Math.ceil((total - deposit) / months / 100) * 100;
-    const due = ['15 Nov 2026', '15 Dec 2026', '15 Jan 2027', '15 Feb 2027', '15 Mar 2027', '15 Apr 2027'];
-    const panels = {
-      pss: `
-        <h3>Pay Small Small</h3>
-        <p class="muted text-sm">Pay 30% today and spread the rest. No interest. Your booking is confirmed once the last instalment is paid.</p>
-        <div class="plan-grid" role="radiogroup" aria-label="Instalment plan">
-          ${[2, 3, 6].map((n) => `<label class="plan"><input type="radio" name="pss" value="${n}" data-action="pss-plan" ${months === n ? 'checked' : ''}><strong>${n} months</strong><span>${fmt(Math.ceil((total - deposit) / n / 100) * 100)}/month</span></label>`).join('')}
-        </div>
-        <div class="schedule">
-          <div><span>Today (30% deposit)</span><strong class="num">${fmt(deposit)}</strong></div>
-          ${due.slice(0, months).map((d) => `<div><span>${d}</span><strong class="num">${fmt(inst)}</strong></div>`).join('')}
-        </div>
-        <button class="btn btn-primary btn-lg" type="button" data-action="open-paystack" data-amount="${deposit}">Pay ${fmt(deposit)} deposit</button>`,
-      card: `
-        <h3>Pay with card</h3>
-        <p class="muted text-sm">Visa, Mastercard and Verve. You'll confirm with your bank's one-time code.</p>
-        <div class="notice notice-info">${icon('lock')}<span>Payments are processed securely by Paystack. Onburd never stores your card number.</span></div>
-        <button class="btn btn-primary btn-lg" type="button" data-action="open-paystack" data-amount="${total}">Pay ${fmt(total)}</button>`,
-      bank: `
-        <h3>Bank transfer</h3>
-        <p class="muted text-sm">Transfer the exact amount to a one-time account. We confirm automatically within 2 minutes.</p>
-        <div class="bank-box">
-          <dl>
-            <dt>Bank</dt><dd>Wema Bank</dd>
-            <dt>Account name</dt><dd>Onburd Checkout</dd>
-            <dt>Account number</dt><dd>${OB.state.bankShown ? '8123 456 790 <button class="link-btn text-xs" type="button" data-action="copy" data-text="8123456790">' + icon('copy') + ' Copy</button>' : '<span class="masked">•••• ••• •••</span>'}</dd>
-            <dt>Amount</dt><dd>${fmt(total)}</dd>
-          </dl>
-          ${OB.state.bankShown
-            ? `<p class="text-xs muted">${icon('clock')} This account expires in 30 minutes.</p><button class="btn btn-primary" type="button" data-action="confirm-paid">I've sent the money</button>`
-            : `<button class="btn btn-secondary" type="button" data-action="show-bank">Show account details</button>`}
-        </div>`
-    };
     return `
       ${OB.nav()}
       <main class="container" style="padding-block:0 72px">
         ${OB.stepper(order.steps, order.payStep)}
-        <div class="with-aside" style="margin-top:28px">
+        <form class="with-aside" style="margin-top:28px" data-form="pay" novalidate>
           <div class="stack" style="gap:24px">
             ${OB.backTitle('Payment', order.back)}
-            <div class="notice notice-pss">${icon('info')}<span>Once you choose how to pay, your price is locked and going back will start a new booking.</span></div>
-            <div class="pay-methods">
-              <div class="pay-tabs" role="tablist" aria-label="Payment method">
-                <button class="pay-tab" role="tab" type="button" data-action="pay-method" data-m="pss" aria-selected="${m === 'pss'}">${icon('wallet')}<span>Pay Small Small<small>30% now, rest later</small></span></button>
-                <button class="pay-tab" role="tab" type="button" data-action="pay-method" data-m="card" aria-selected="${m === 'card'}">${icon('card')}<span>Card<small>Visa, Mastercard, Verve</small></span></button>
-                <button class="pay-tab" role="tab" type="button" data-action="pay-method" data-m="bank" aria-selected="${m === 'bank'}">${icon('bank')}<span>Bank transfer<small>Confirms in 2 minutes</small></span></button>
-              </div>
-              <div class="pay-panel" role="tabpanel">${panels[m]}</div>
-            </div>
+            ${OB.paymentPanel('pay-terms', OB.state.payTerms)}
+            <div><button class="btn btn-primary btn-lg" type="submit">Pay ${fmt(total)}</button></div>
           </div>
-          <div class="aside-sticky">${OB.orderSummary(order)}</div>
-        </div>
+          <div class="aside-sticky">${OB.orderSummary(order)}
+            <div class="assure"><span>${icon('check')} Best price guaranteed</span></div>
+          </div>
+        </form>
       </main>
       ${OB.footer()}`;
   };
