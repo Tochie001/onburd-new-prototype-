@@ -555,7 +555,6 @@ window.OB = window.OB || {};
             <img src="assets/brand/logo-blue.svg" alt="onburd" class="fc-logo">
             <div class="row"><button class="btn btn-primary btn-sm" type="button" data-action="print">Print</button></div>
           </div>
-          <dl class="fc-kv fc-kv-2"><div><dt>Booking number</dt><dd class="fc-big">${bookingNo}</dd></div><div><dt>Booking date</dt><dd>22 Oct 2026</dd></div></dl>
           <dl class="fc-kv">
             <div><dt>Passenger name</dt><dd>${esc(title)}. ${esc(first)} ${esc(last)}</dd></div>
             <div><dt>Passport number</dt><dd>${esc(pi.passport || 'A09345821')}</dd></div>
