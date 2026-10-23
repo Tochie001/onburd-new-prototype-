@@ -190,7 +190,7 @@ window.OB = window.OB || {};
             </section>
             ${OB.paymentPanel('xc-terms', OB.state.xc.terms, total)}
             <p class="text-xs" id="xc-error" style="color:var(--danger-ink)" hidden>Please fill in your contact details and tick the terms and conditions.</p>
-            <div><button class="btn btn-primary btn-lg" type="submit">${OB.state.payChoice === 'pss' ? `Pay ${fmt(OB.payNow(total))} deposit` : `Pay ${fmt(total)}`}</button></div>
+            <div><button class="btn btn-primary btn-lg" type="submit">${OB.payLabel(total)}</button></div>
           </div>
           <div class="aside-sticky">${OB.orderSummary(order)}
             <div class="assure"><span>${icon('check')} Best price guaranteed</span></div>

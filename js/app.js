@@ -410,8 +410,9 @@ window.OB = window.OB || {};
       const ok = $('#pay-terms').checked;
       $('#pay-terms-error').hidden = ok;
       if (!ok) { $('#pay-terms').focus(); return; }
-      S.payMethod = S.payChoice === 'pss' ? 'pss' : 'card';
-      openOverlay(OB.paystackModal(OB.payNow(OB.orderTotal(S.order))));
+      if (S.payChoice === 'pss') { toast('Redirecting you to Pay Small Small to set up your plan…'); return; }
+      S.payMethod = 'card';
+      openOverlay(OB.paystackModal(OB.orderTotal(S.order)));
     },
     'exp-checkout': (form) => {
       const need = ['xc-first', 'xc-last', 'xc-email', 'xc-phone'].map((id) => document.getElementById(id));
@@ -419,8 +420,10 @@ window.OB = window.OB || {};
       const ok = need.every((i) => i.value.trim()) && $('#xc-terms').checked;
       $('#xc-error').hidden = ok;
       if (!ok) { (need.find((i) => !i.value.trim()) || $('#xc-terms')).focus(); return; }
-      S.order = OB.expOrder(OB.find(OB.experiences, form.dataset.id)); S.payMethod = S.payChoice === 'pss' ? 'pss' : 'card';
-      openOverlay(OB.paystackModal(OB.payNow(OB.orderTotal(S.order))));
+      S.order = OB.expOrder(OB.find(OB.experiences, form.dataset.id));
+      if (S.payChoice === 'pss') { toast('Redirecting you to Pay Small Small to set up your plan…'); return; }
+      S.payMethod = 'card';
+      openOverlay(OB.paystackModal(OB.orderTotal(S.order)));
     },
     'list-search': (form) => { form.querySelector('input')?.blur(); },
     newsletter: (form) => { toast('Subscribed. Your first deals email arrives Thursday.'); form.reset(); },

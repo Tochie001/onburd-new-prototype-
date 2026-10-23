@@ -411,10 +411,10 @@ window.OB = window.OB || {};
     const inst = Math.ceil((total - deposit) / months / 100) * 100;
     return { deposit, inst, months, due: ['15 Nov 2026', '15 Dec 2026', '15 Jan 2027', '15 Feb 2027', '15 Mar 2027', '15 Apr 2027'].slice(0, months) };
   };
-  OB.payNow = (total) => (OB.state.payChoice === 'pss' ? OB.pssPlan(total).deposit : total);
+  OB.payNow = (total) => total;
+  OB.payLabel = (total) => (OB.state.payChoice === 'pss' ? 'Continue with Pay Small Small' : `Pay ${fmt(total)}`);
   OB.paymentPanel = (termsId, checked = false, total = 0) => {
     const pss = OB.state.payChoice === 'pss';
-    const plan = OB.pssPlan(total);
     return `
     <section class="panel" aria-labelledby="pay-h">
       <div class="panel-head"><div><h2 id="pay-h">Payment</h2><p>You'll confirm the payment in a secure window.</p></div></div>
@@ -427,16 +427,6 @@ window.OB = window.OB || {};
           <span class="pay-one-text"><strong>Pay Small Small</strong><small>Pay in instalments. You can choose a flexible and convenient payment plan.</small></span>
           <img class="pss-badge" src="assets/brand/pss-logo.svg" alt="Pay Small Small">
         </label>
-        ${pss ? `<div class="pss-plan">
-          <div class="plan-grid" role="radiogroup" aria-label="Instalment plan">
-            ${[2, 3, 6].map((n) => `<label class="plan"><input type="radio" name="pss" value="${n}" data-action="pss-plan" ${plan.months === n ? 'checked' : ''}><strong>${n} months</strong><span>${fmt(OB.pssPlan(total, n).inst)}/month</span></label>`).join('')}
-          </div>
-          <div class="schedule">
-            <div><span>Today (30% deposit)</span><strong class="num">${fmt(plan.deposit)}</strong></div>
-            ${plan.due.map((d) => `<div><span>${d}</span><strong class="num">${fmt(plan.inst)}</strong></div>`).join('')}
-          </div>
-          <p class="text-xs muted">Your booking is confirmed once the final instalment is paid.</p>
-        </div>` : ''}
       </div>
     </section>
     <div class="stack" style="gap:12px">
@@ -456,7 +446,7 @@ window.OB = window.OB || {};
           <div class="stack" style="gap:24px">
             ${OB.backTitle('Payment', order.back)}
             ${OB.paymentPanel('pay-terms', OB.state.payTerms, total)}
-            <div><button class="btn btn-primary btn-lg" type="submit">${OB.state.payChoice === 'pss' ? `Pay ${fmt(OB.payNow(total))} deposit` : `Pay ${fmt(total)}`}</button></div>
+            <div><button class="btn btn-primary btn-lg" type="submit">${OB.payLabel(total)}</button></div>
           </div>
           <div class="aside-sticky">${OB.orderSummary(order)}
             <div class="assure"><span>${icon('check')} Best price guaranteed</span></div>
