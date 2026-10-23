@@ -305,7 +305,8 @@ window.OB = window.OB || {};
   OB.pages['flight-trip'] = () => {
     const f = OB.getFlight(OB.state.flightId);
     const order = OB.flightOrder();
-    const u = OB.state.paxPrefill ? OB.state.user : null;
+    // Prototype: always prefilled with sample details so testers don't have to type
+    const u = OB.state.user;
     const v = (x) => (u ? esc(x) : '');
     return `
       ${OB.nav()}
@@ -343,9 +344,9 @@ window.OB = window.OB || {};
             <section class="panel" aria-labelledby="contact">
               <div class="panel-head"><div><h2 id="contact">Contact details</h2><p>We send your e-ticket and any schedule changes here.</p></div></div>
               <div class="form-grid">
-                <div class="field-group col-6"><label for="c-email">Email address</label><input class="input" id="c-email" type="email" value="${OB.state.loggedIn ? esc(OB.state.user.email) : ''}" placeholder="you@example.com" required></div>
+                <div class="field-group col-6"><label for="c-email">Email address</label><input class="input" id="c-email" type="email" value="${esc(OB.state.user.email)}" placeholder="you@example.com" required></div>
                 <div class="field-group col-6"><label for="c-phone">Phone number</label>
-                  <div class="phone-input"><select class="select" id="c-cc" aria-label="Country code"><option>🇳🇬 +234</option><option>🇬🇭 +233</option><option>🇰🇪 +254</option></select><input class="input" id="c-phone" type="tel" value="${OB.state.loggedIn ? '803 456 7890' : ''}" placeholder="803 456 7890" required></div></div>
+                  <div class="phone-input"><select class="select" id="c-cc" aria-label="Country code"><option>🇳🇬 +234</option><option>🇬🇭 +233</option><option>🇰🇪 +254</option></select><input class="input" id="c-phone" type="tel" value="803 456 7890" placeholder="803 456 7890" required></div></div>
               </div>
             </section>
 
@@ -359,7 +360,7 @@ window.OB = window.OB || {};
             </details>
 
             <div class="stack" style="gap:12px">
-              <label class="check"><input type="checkbox" id="tc-general" required><span>I agree to Onburd's <a href="#home">booking terms</a> and the airline's fare rules.</span></label>
+              <label class="check"><input type="checkbox" id="tc-general" required checked><span>I agree to Onburd's <a href="#home">booking terms</a> and the airline's fare rules.</span></label>
               <label class="check"><input type="checkbox" id="tc-promo"><span>I agree to the Detty December promotion terms (only needed when using a promo code).</span></label>
               <p class="error text-xs" id="pax-error" style="color:var(--danger-ink)" hidden>Please accept the booking terms to continue.</p>
             </div>
