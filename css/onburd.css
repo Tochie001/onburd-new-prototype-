@@ -1149,6 +1149,7 @@ button.fm-cell:hover { color: var(--blue-700); background: var(--blue-50); }
 .fc-meta dd { margin: 4px 0 0; font-weight: 700; font-size: var(--fs-sm); }
 .fc-doc { padding: 32px 40px 36px; display: grid; gap: 22px; }
 .fc-doc h2 { font-size: var(--fs-h3); margin-top: 8px; }
+.fc-doc h2.fc-pax-title { margin-top: 0; margin-bottom: -6px; }
 .fc-doc-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .fc-logo { height: 30px; width: auto; }
 .fc-kv { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 20px; margin: 0; }
