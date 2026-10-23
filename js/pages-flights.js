@@ -424,7 +424,7 @@ window.OB = window.OB || {};
           ${OB.paystackLogo()}
         </label>
         <label class="radio-card is-single"><input type="radio" name="pay-method" value="pss" data-action="pay-choice" ${pss ? 'checked' : ''}>
-          <span class="pay-one-text"><strong>Pay Small Small</strong><small>Pay 30% today and spread the rest. No interest.</small></span>
+          <span class="pay-one-text"><strong>Pay Small Small</strong><small>Pay in instalments. You can choose a flexible and convenient payment plan.</small></span>
           <img class="pss-badge" src="assets/brand/pss-logo.svg" alt="Pay Small Small">
         </label>
         ${pss ? `<div class="pss-plan">
