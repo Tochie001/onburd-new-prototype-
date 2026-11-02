@@ -404,6 +404,8 @@ window.OB = window.OB || {};
 
   // Set to false to go back to the balloon photo on the v1 Flights hero.
   OB.HERO_VIDEO = false;
+  // Phones only: drops the hero photo and headline so search comes first. Set to false for the previous phone hero.
+  OB.MOBILE_STREAMLINED = true;
 
   OB.hero = (tab) => {
     const t = OB.TABS.find((x) => x.id === tab) || OB.TABS[0];
@@ -412,11 +414,11 @@ window.OB = window.OB || {};
       ? `<img class="hero-poster" src="${img('hero-jet-poster')}" alt=""><video class="hero-video" data-src="hero-jet" autoplay muted loop playsinline preload="auto" poster="${img('hero-jet-poster')}" aria-hidden="true"><source src="assets/video/hero-jet.mp4" type="video/mp4"></video>`
       : `<img src="${img(t.hero)}" alt="" style="object-position:${t.pos || '50% 50%'}">`;
     return `
-    <section class="hero ${video ? 'has-video' : ''}" aria-label="Search">
+    <section class="hero ${video ? 'has-video' : ''} ${OB.MOBILE_STREAMLINED ? 'is-lean' : ''}" aria-label="Search">
       <div class="hero-bg">${bg}</div>
-      ${OB.nav({ overlay: true })}
+      ${OB.nav({ overlay: true, lean: OB.MOBILE_STREAMLINED })}
       <div class="container hero-inner">
-        <div>
+        <div class="hero-copy">
           <h1>Book your next trip &amp; weekend plans, all in one place</h1>
           <p class="lede">Flights, concerts, experiences and cinema tickets across Africa.</p>
         </div>
