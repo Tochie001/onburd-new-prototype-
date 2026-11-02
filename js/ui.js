@@ -42,7 +42,7 @@ window.OB = window.OB || {};
     }
   };
 
-  OB.nav = ({ overlay = false, current = '', home = 'home', lean = false } = {}) => {
+  OB.nav = ({ overlay = false, current = '', home = 'home' } = {}) => {
     const s = OB.state;
     const logo = overlay ? 'logo-white' : 'logo-blue';
     const account = s.loggedIn
@@ -51,7 +51,7 @@ window.OB = window.OB || {};
     return `
     <header class="nav ${overlay ? 'is-overlay' : ''} ${home === 'home2' ? 'nav-wide' : ''}">
       <div class="container nav-inner">
-        <a class="nav-logo" href="#${home}" aria-label="Onburd home"><picture>${lean ? '<source media="(max-width: 560px)" srcset="assets/brand/logo-blue.svg">' : ''}<img src="assets/brand/${logo}.svg" alt="onburd"></picture></a>
+        <a class="nav-logo" href="#${home}" aria-label="Onburd home"><img src="assets/brand/${logo}.svg" alt="onburd"></a>
         <nav class="nav-links" aria-label="Main">
           <a class="nav-link ${current === 'bookings' ? 'is-current' : ''}" href="#bookings">My bookings</a>
           <span class="nav-sep" aria-hidden="true"></span>
