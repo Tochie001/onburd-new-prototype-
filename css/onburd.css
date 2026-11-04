@@ -572,6 +572,8 @@ a.mcard:hover, button.mcard:hover, article.mcard:hover { text-decoration: none; 
 .social-strip p { color: var(--on-dark-muted); font-size: var(--fs-xs); margin-top: 2px; }
 .social-list { display: flex; gap: 12px; flex-wrap: wrap; }
 .social-item { display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 12px; border-radius: var(--r-md); background: rgba(255,255,255,.06); }
+.social-item, .social-item:hover { color: var(--on-dark); text-decoration: none; }
+.social-item:hover .btn-on-dark { background: rgba(255, 255, 255, .2); }
 .social-item .brand-logo { flex: none; display: block; }
 .social-item .btn { margin-left: auto; }
 .social-item { background: rgba(255,255,255,.08) !important; border: 1px solid rgba(255,255,255,.1); }

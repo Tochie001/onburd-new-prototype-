@@ -42,6 +42,12 @@ window.OB = window.OB || {};
     }
   };
 
+  const SOCIALS = {
+    Instagram: 'https://www.instagram.com/getonburd',
+    X: 'https://x.com/getonburd',
+    TikTok: 'https://www.tiktok.com/@getonburd'
+  };
+
   OB.nav = ({ overlay = false, current = '', home = 'home' } = {}) => {
     const s = OB.state;
     const logo = overlay ? 'logo-white' : 'logo-blue';
@@ -94,7 +100,7 @@ window.OB = window.OB || {};
             <img class="footer-logo" src="assets/brand/logo-blue.svg" alt="onburd">
             <p style="max-width:36ch">Flights, hotels, concerts, experiences and cinema tickets across Africa, booked in one place.</p>
             <div class="footer-social">
-              ${['Instagram', 'X', 'TikTok'].map((n) => `<a href="#home" aria-label="Onburd on ${n}">${OB.brandGlyph(n)}</a>`).join('')}
+              ${Object.entries(SOCIALS).map(([n, url]) => `<a href="${url}" target="_blank" rel="noopener" aria-label="Onburd on ${n}">${OB.brandGlyph(n)}</a>`).join('')}
             </div>
           </div>
           <div>
@@ -276,9 +282,9 @@ window.OB = window.OB || {};
     <div class="social-strip">
       <div><h3>Stay tuned, fun things are happening</h3><p>Follow Onburd for drops, presales and giveaways.</p></div>
       <div class="social-list">
-        ${['Instagram', 'X', 'TikTok'].map((n) => `
-          <div class="social-item">${OB.brandLogo(n, 36)}<strong>@getonburd</strong>
-          <button class="btn btn-on-dark btn-sm" type="button" data-action="toast" data-msg="Opens Onburd on ${n}.">Follow</button></div>`).join('')}
+        ${Object.entries(SOCIALS).map(([n, url]) => `
+          <a class="social-item" href="${url}" target="_blank" rel="noopener" aria-label="Follow Onburd on ${n}">${OB.brandLogo(n, 36)}<strong>@getonburd</strong>
+          <span class="btn btn-on-dark btn-sm">Follow</span></a>`).join('')}
       </div>
     </div>`;
 
