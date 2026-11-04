@@ -276,8 +276,8 @@ window.OB = window.OB || {};
     <div class="social-strip">
       <div><h3>Stay tuned, fun things are happening</h3><p>Follow Onburd for drops, presales and giveaways.</p></div>
       <div class="social-list">
-        ${[['Instagram', '78.1K'], ['X', '162.5K'], ['TikTok', '24.9K']].map(([n, f]) => `
-          <div class="social-item">${OB.brandLogo(n, 36)}<div><strong>@onburd</strong><small>${f} followers</small></div>
+        ${['Instagram', 'X', 'TikTok'].map((n) => `
+          <div class="social-item">${OB.brandLogo(n, 36)}<strong>@getonburd</strong>
           <button class="btn btn-on-dark btn-sm" type="button" data-action="toast" data-msg="Opens Onburd on ${n}.">Follow</button></div>`).join('')}
       </div>
     </div>`;
